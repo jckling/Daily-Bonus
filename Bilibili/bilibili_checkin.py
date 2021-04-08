@@ -3,8 +3,8 @@
 # @Time     : 2021/04/07 15:10
 # @Author   : Jckling
 
-import json
 import os
+
 import requests
 
 COOKIES = os.environ.get("BILIBILI_COOKIES")
@@ -34,14 +34,22 @@ def check_in():
     url = "https://api.live.bilibili.com/xlive/web-ucenter/v1/sign/DoSign"
     r = SESSION.get(url, headers=headers)
 
-    obj = json.loads(r.text)
-    if obj["data"]:
-        print(obj["data"]["text"])
-        print(obj["data"]["specialText"])
-        print("本月已签到 %d 天" % obj["data"]["hadSignDays"])
+    try:
+        obj = r.json()
+        if obj["code"] == 0:
+            print(obj["data"]["text"])
+            print(obj["data"]["specialText"])
+            print("本月已签到 %d 天" % obj["data"]["hadSignDays"])
+        elif obj["code"] == 1011040:
+            print(obj["message"])
+        else:
+            print("签到失败")
+    except Exception as e:
+        print("签到异常", e)
     else:
-        print(obj["message"])
+        return False
 
 
 if __name__ == '__main__':
-    check_in()
+    while check_in():
+        pass
