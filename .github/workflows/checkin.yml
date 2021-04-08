@@ -23,3 +23,5 @@ jobs:
       - name: Check in
         run: |
           python ./Bilibili/bilibili_checkin.py
+          python ./NetEase_Cloud_Music/music_checkin.py
+          python ./Yamibo/yamibo_checkin.py
