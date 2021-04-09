@@ -7,7 +7,7 @@ import os
 
 import requests
 
-COOKIES = os.environ.get("BILIBILI_COOKIES")
+COOKIES = os.environ.get("BILIBILI_COOKIES") or ""
 
 SESSION = requests.Session()
 
@@ -51,5 +51,4 @@ def check_in():
 
 
 if __name__ == '__main__':
-    while check_in():
-        pass
+    check_in()
