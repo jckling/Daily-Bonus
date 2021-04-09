@@ -7,7 +7,7 @@ import os
 
 import requests
 
-COOKIES = os.environ.get("BILIBILI_COOKIES") or ""
+COOKIES = os.environ.get("BILIBILI_COOKIES")
 
 SESSION = requests.Session()
 

@@ -12,6 +12,12 @@ jobs:
 
     environment: checkin_environment
 
+    env:
+      BILIBILI_COOKIES: ${{ secrets.BILIBILI_COOKIES }}
+      MUSIC_CELLPHONE: ${{ secrets.MUSIC_CELLPHONE }}
+      MUSIC_PASSWORD: ${{ secrets.MUSIC_PASSWORD }}
+      YAMIBO_COOKIES: ${{ secrets.YAMIBO_COOKIES }}
+
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
