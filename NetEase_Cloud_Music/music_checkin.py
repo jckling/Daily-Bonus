@@ -87,8 +87,10 @@ def login():
     obj = r.json()
     if obj["code"] == 200:
         print("登录成功")
+        return True
     else:
         print(obj["message"])
+        return False
 
 
 # 签到
@@ -106,5 +108,7 @@ def check_in():
 
 
 if __name__ == '__main__':
-    login()
-    check_in()
+    print("=" * 20, " 网易云 签到开始 ", "=" * 20)
+    if login():
+        check_in()
+    print("=" * 20, " 网易云 签到结束 ", "=" * 20, "\n")

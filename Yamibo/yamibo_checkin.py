@@ -41,8 +41,11 @@ def check_in():
         print(tree.xpath('//div[@id="messagetext"]/text()'))
     elif "登录" in r.text:
         print("登录失败，Cookie 可能已经失效")
+        return False
     else:
         print("今日已签到")
+
+    return True
 
 
 # 查询
@@ -59,5 +62,7 @@ def query_credit():
 
 
 if __name__ == '__main__':
-    check_in()
-    query_credit()
+    print("=" * 20, " 300 签到开始 ", "=" * 20)
+    if check_in():
+        query_credit()
+    print("=" * 20, " 300 签到结束 ", "=" * 20, "\n")

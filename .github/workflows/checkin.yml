@@ -17,7 +17,7 @@ jobs:
       MUSIC_CELLPHONE: ${{ secrets.MUSIC_CELLPHONE }}
       MUSIC_PASSWORD: ${{ secrets.MUSIC_PASSWORD }}
       YAMIBO_COOKIES: ${{ secrets.YAMIBO_COOKIES }}
-
+      V2EX_COOKIES: ${{ secrets.V2EX_COOKIES }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
@@ -34,3 +34,4 @@ jobs:
           python ./Bilibili/bilibili_checkin.py
           python ./NetEase_Cloud_Music/music_checkin.py
           python ./Yamibo/yamibo_checkin.py
+          python ./V2EX/v2ex_checkin.py

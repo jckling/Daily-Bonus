@@ -51,4 +51,6 @@ def check_in():
 
 
 if __name__ == '__main__':
+    print("=" * 20, " Bilibili 签到开始 ", "=" * 20)
     check_in()
+    print("=" * 20, " Bilibili 签到结束 ", "=" * 20, "\n")
