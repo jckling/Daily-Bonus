@@ -1,0 +1,90 @@
+# -*- coding: utf-8 -*-
+# @File     : v2ex_checkin.py
+# @Time     : 2021/04/08 09:43
+# @Author   : Jckling
+
+import datetime
+import os
+import re
+
+import requests
+from lxml import html
+
+COOKIES = os.environ.get("V2EX_COOKIES")
+
+SESSION = requests.Session()
+
+HEADERS = {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7,zh-TW;q=0.6,da;q=0.5",
+    "cache-control": "no-cache",
+    "Cookie": COOKIES,
+    "pragma": "no-cache",
+    "Referer": "https://www.v2ex.com/",
+    "sec-ch-ua": '"Google Chrome";v="89", "Chromium";v="89", ";Not A Brand";v="99"',
+    "sec-ch-ua-mobile": "?0",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
+    "x-requested-with": "X",
+}
+
+
+# 获取 once
+def get_once():
+    url = "https://www.v2ex.com/mission/daily"
+    r = SESSION.get(url, headers=HEADERS)
+
+    if "你要查看的页面需要先登录" in r.text:
+        print("你要查看的页面需要先登录")
+        return ""
+    elif "每日登录奖励已领取" in r.text:
+        msg = re.search(r"已连续登录 \d+ 天", r.text)[0]
+        print("每日登录奖励已领取，" + msg)
+        return ""
+
+    once = re.search(r"once=(\d+)", r.text).group(1)
+    return once
+
+
+# 签到
+def check_in(once):
+    # 无内容返回
+    url = "https://www.v2ex.com/mission/daily/redeem?once=" + once
+    SESSION.get(url, headers=HEADERS)
+
+
+# 查询
+def query_balance():
+    url = "https://www.v2ex.com/balance"
+    r = SESSION.get(url, headers=HEADERS)
+
+    tree = html.fromstring(r.content)
+
+    # 签到结果
+    checkin_day_str = tree.xpath('//small[@class="gray"]/text()')[0]
+    checkin_day = datetime.datetime.now().astimezone().strptime(checkin_day_str, '%Y-%m-%d %H:%M:%S %z')
+    if checkin_day.date() == datetime.date.today():
+        # 签到奖励
+        bonus = tree.xpath('//span[@class="gray"]/text()')[0]
+        print(bonus)
+
+        # 余额
+        balance = tree.xpath('//div[@class="balance_area bigger"]/text()')
+        if len(balance) == 2:
+            balance = ['0'] + balance
+
+        golden, silver, bronze = [s.strip() for s in balance]
+        print("账户余额：%s 金币，%s 银币，%s 铜币" % (golden, silver, bronze))
+    else:
+        print("签到失败")
+
+
+if __name__ == '__main__':
+    print("=" * 20, " V2EX 签到开始 ", "=" * 20)
+    once = get_once()
+    check_in(once)
+    query_balance()
+    print("=" * 20, " V2EX 签到结束 ", "=" * 20, "\n")
