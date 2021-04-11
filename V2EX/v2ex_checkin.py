@@ -68,7 +68,7 @@ def query_balance():
     checkin_day = datetime.datetime.now().astimezone().strptime(checkin_day_str, '%Y-%m-%d %H:%M:%S %z')
     if checkin_day.date() == datetime.date.today():
         # 签到奖励
-        bonus = tree.xpath('//span[@class="gray"]/text()')[0]
+        bonus = re.search('\d+ 的每日登录奖励 \d+ 铜币', r.text)[0]
         print(bonus)
 
         # 余额
