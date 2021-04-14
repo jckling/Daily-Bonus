@@ -2,12 +2,12 @@
 
 ## TODO
 
-- [x] bilibili 直播签到
-- [x] yamibo 论坛签到
-- [ ] 网易云签到
-- [x] v2ex 积分签到
-- [ ] ff14 积分签到
-- [ ] 百度贴吧签到
+- [x] bilibili 直播（辣条）
+- [x] yamibo 论坛（对象）
+- [x] 网易云手机端（云贝）
+- [x] v2ex （铜币）
+- [ ] ff14 （积分）
+- [ ] 百度贴吧（）
 
 PS：V2EX 签到可用插件 [V2EX plus](https://github.com/sciooga/v2ex-plus)
 
