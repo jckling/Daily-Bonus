@@ -104,7 +104,7 @@ def check_in():
     elif obj["code"] == -2:
         print(obj["msg"])
     else:
-        print("签到失败")
+        print("签到失败：", obj["message"])
 
 
 if __name__ == '__main__':
