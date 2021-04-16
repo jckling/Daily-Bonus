@@ -10,8 +10,8 @@ import time
 import requests
 
 # info
-USERNAME = os.environ.get('FFIXV_USERNAME')
-PASSWORD = os.environ.get('FFIXV_PASSWORD')
+USERNAME = os.environ.get('FFXIV_USERNAME')
+PASSWORD = os.environ.get('FFXIV_PASSWORD')
 AREA_NAME = os.environ.get('FFXIV_AREA_NAME')
 SERVER_NAME = os.environ.get('FFXIV_SERVER_NAME')
 ROLE_NAME = os.environ.get('FFXIV_ROLE_NAME')
