@@ -7,6 +7,7 @@ import os
 
 import requests
 
+# cookies
 COOKIES = os.environ.get("BILIBILI_COOKIES")
 
 SESSION = requests.Session()
@@ -51,6 +52,6 @@ def check_in():
 
 
 if __name__ == '__main__':
-    print("=" * 20, " Bilibili 签到开始 ", "=" * 20)
+    print(" Bilibili 签到开始 ".center(60, "="))
     check_in()
-    print("=" * 20, " Bilibili 签到结束 ", "=" * 20, "\n")
+    print(" Bilibili 签到结束 ".center(60, "="), "\n")

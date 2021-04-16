@@ -8,6 +8,7 @@ import os
 import requests
 from lxml import html
 
+# cookies
 COOKIES = os.environ.get("YAMIBO_COOKIES")
 
 SESSION = requests.Session()
@@ -62,7 +63,7 @@ def query_credit():
 
 
 if __name__ == '__main__':
-    print("=" * 20, " 300 签到开始 ", "=" * 20)
+    print(" 300 签到开始 ".center(60, "="))
     if check_in():
         query_credit()
-    print("=" * 20, " 300 签到结束 ", "=" * 20, "\n")
+    print(" 300 签到结束 ".center(60, "="), "\n")

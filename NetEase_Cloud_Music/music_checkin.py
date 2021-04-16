@@ -12,6 +12,7 @@ import requests
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
+# info
 CELLPHONE = os.environ.get('MUSIC_CELLPHONE')
 PASSWORD = os.environ.get('MUSIC_PASSWORD')
 
@@ -84,12 +85,16 @@ def login():
     url = "https://music.163.com/weapi/login/cellphone"
     r = SESSION.post(url, data=protect(json.dumps(logindata)), headers=headers)
 
-    obj = r.json()
-    if obj["code"] == 200:
-        print("登录成功")
-        return True
-    else:
-        print(obj["message"])
+    try:
+        obj = r.json()
+        if obj["code"] == 200:
+            print("登录成功")
+            return True
+        else:
+            print(obj["message"])
+            return False
+    except json.decoder.JSONDecodeError:
+        print(r.text)
         return False
 
 
@@ -108,7 +113,8 @@ def check_in():
 
 
 if __name__ == '__main__':
-    print("=" * 20, " 网易云 签到开始 ", "=" * 20)
-    if login():
-        check_in()
-    print("=" * 20, " 网易云 签到结束 ", "=" * 20, "\n")
+    print(" 网易云 签到开始 ".center(60, "="))
+    while not login():
+        pass
+    check_in()
+    print(" 网易云 签到结束 ".center(60, "="), "\n")

@@ -10,6 +10,7 @@ import re
 import requests
 from lxml import html
 
+# cookies
 COOKIES = os.environ.get("V2EX_COOKIES")
 
 SESSION = requests.Session()
@@ -83,8 +84,8 @@ def query_balance():
 
 
 if __name__ == '__main__':
-    print("=" * 20, " V2EX 签到开始 ", "=" * 20)
+    print(" V2EX 签到开始 ".center(60, "="))
     once = get_once()
     check_in(once)
     query_balance()
-    print("=" * 20, " V2EX 签到结束 ", "=" * 20, "\n")
+    print(" V2EX 签到结束 ".center(60, "="), "\n")
