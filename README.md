@@ -21,9 +21,12 @@ PS：V2EX 签到可用插件 [V2EX plus](https://github.com/sciooga/v2ex-plus)
 
 1. Fork 本仓库
 2. 新建环境：Settings - Environments - New environment - 新建 checkin_environment
-3. 环境变量：Settings - Environments - Environment secrets - Add Secret
+3. 部署分支：Deployment branches - All branches 或 Selected branches（选择 master 分支）
+4. 环境变量：Environment secrets - Add Secret
 
 添加 Secrets 之后可以更新值，但不能修改名称。
+
+![](screenshots/config.png)
 
 ### FFXIV
 
