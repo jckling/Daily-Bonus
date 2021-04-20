@@ -34,10 +34,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+      - name: Set timezone
+        run: sudo timedatectl set-timezone 'Asia/Shanghai'
       - name: Check in
         run: |
           python ./Bilibili/bilibili_checkin.py
           python ./Yamibo/yamibo_checkin.py
-          python ./V2EX/v2ex_checkin.py
           python ./NetEase_Cloud_Music/music_checkin.py
+          python ./V2EX/v2ex_checkin.py
           python ./FFXIV/ff14_checkin.py
