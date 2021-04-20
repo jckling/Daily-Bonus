@@ -70,7 +70,7 @@ def login():
     url = "https://cas.sdo.com/authen/staticLogin.jsonp"
     r = requests.get(url, headers=headers, params=params)
     set_cookies(r.cookies.items())
-    print(r.text)
+
     # 获取 ticket 字段
     text = r.text
     text = text[text.find("(") + 1: text.rfind(")")]
