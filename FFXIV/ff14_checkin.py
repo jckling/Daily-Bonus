@@ -203,11 +203,10 @@ def query_points():
 if __name__ == "__main__":
     print(" FF14 签到开始 ".center(60, "="))
     ticket = login()
-    if ticket == "":
-        exit()
-    get_cookies(ticket)
-    auth(ticket)
-    select_role()
-    check_in()
-    query_points()
+    if ticket != "":
+        get_cookies(ticket)
+        auth(ticket)
+        select_role()
+        check_in()
+        query_points()
     print(" FF14 签到结束 ".center(60, "="), "\n")

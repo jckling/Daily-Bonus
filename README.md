@@ -11,6 +11,8 @@
 
 PS：V2EX 签到可用插件 [V2EX plus](https://github.com/sciooga/v2ex-plus)
 
+300 源站偶尔会挂掉...；FF14 登录保护已允许美国，不过目前还一直有验证码；V2EX 貌似看时区，还在测试设置时区的影响。
+
 ## Tools
 
 - Fiddler 4
@@ -20,8 +22,8 @@ PS：V2EX 签到可用插件 [V2EX plus](https://github.com/sciooga/v2ex-plus)
 ## GitHub Actions
 
 1. Fork 本仓库
-2. 新建环境：Settings - Environments - New environment - 新建 checkin_environment
-3. 部署分支：Deployment branches - All branches 或 Selected branches（选择 master 分支）
+2. 新建环境（可选）：Settings - Environments - New environment - 新建 checkin_environment
+3. 部署分支（可选）：Deployment branches - All branches 或 Selected branches（选择 master 分支）
 4. 环境变量：Environment secrets - Add Secret
 
 添加 Secrets 之后可以更新值，但不能修改名称。
