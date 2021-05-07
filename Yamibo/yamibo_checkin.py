@@ -34,11 +34,11 @@ HEADERS = {
 
 # 签到
 def check_in():
-    url = "https://bbs.yamibo.com/plugin.php?id=study_daily_attendance:daily_attendance&fhash=be85d652"
+    url = "https://bbs.yamibo.com/plugin.php?id=study_daily_attendance:daily_attendance&fhash=41c1cbf1"
     r = SESSION.get(url, headers=HEADERS)
 
     if "签到成功" in r.text:
-        tree = html.fromstring(r.content)
+        tree = html.fromstring(r.text)
         print(tree.xpath('//div[@id="messagetext"]/text()'))
     elif "登录" in r.text:
         print("登录失败，Cookie 可能已经失效")
@@ -54,7 +54,7 @@ def query_credit():
     url = "https://bbs.yamibo.com/home.php?mod=spacecp&ac=credit&op=base"
     r = SESSION.get(url, headers=HEADERS)
 
-    tree = html.fromstring(r.content)
+    tree = html.fromstring(r.text)
     credit = tree.xpath('//ul[@class="creditl mtm bbda cl"]/li/text()')
     print("对象:\t %s\t\n"
           "积分:\t %s\t\n"
