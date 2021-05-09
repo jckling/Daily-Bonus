@@ -53,9 +53,10 @@ def check_in():
 def query_credit():
     url = "https://bbs.yamibo.com/home.php?mod=spacecp&ac=credit&op=base"
     r = SESSION.get(url, headers=HEADERS)
-    print(r.content.decode('gbk'))
+
     tree = html.fromstring(r.text)
     credit = tree.xpath('//ul[@class="creditl mtm bbda cl"]/li/text()')
+    print([i.strip() for i in credit])
     print("对象:\t %s\t\n"
           "积分:\t %s\t\n"
           "总积分:\t %s 点\t\n"
