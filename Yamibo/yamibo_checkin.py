@@ -31,11 +31,10 @@ HEADERS = {
     "Cookie": COOKIES
 }
 
-
 # 签到
 def check_in():
     url = "https://bbs.yamibo.com/plugin.php?id=study_daily_attendance:daily_attendance&fhash=41c1cbf1"
-    r = SESSION.get(url, headers=HEADERS)
+    r = SESSION.get(url, headers=HEADERS, verify=False)
 
     if "签到成功" in r.text:
         tree = html.fromstring(r.text)
@@ -52,7 +51,7 @@ def check_in():
 # 查询
 def query_credit():
     url = "https://bbs.yamibo.com/home.php?mod=spacecp&ac=credit&op=base"
-    r = SESSION.get(url, headers=HEADERS)
+    r = SESSION.get(url, headers=HEADERS, verify=False)
 
     tree = html.fromstring(r.text)
     credit = tree.xpath('//ul[@class="creditl mtm bbda cl"]/li/text()')
