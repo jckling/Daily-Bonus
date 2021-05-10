@@ -5,10 +5,8 @@
 
 import os
 
-import requests.packages.urllib3.util.ssl_
+import requests
 from lxml import html
-
-requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL'
 
 # cookies
 COOKIES = os.environ.get("YAMIBO_COOKIES")

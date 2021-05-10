@@ -86,4 +86,3 @@ bilibili 直播间使用 Cookie 登录。
 - [构建和测试 Python](https://docs.github.com/cn/actions/guides/building-and-testing-python)
 - [为用户帐户仓库创建密码](https://docs.github.com/cn/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
 - [mengshouer/CheckinBox](https://github.com/mengshouer/CheckinBox)
-- [SSLError HTTPSConnectionPool Max retries exceeded with url: /oauth/token Caused by SSLError('bad handshake: SysCallError(0, None)) #4246](https://github.com/psf/requests/issues/4246)
