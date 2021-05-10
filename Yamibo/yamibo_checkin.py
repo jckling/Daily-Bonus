@@ -5,8 +5,10 @@
 
 import os
 
-import requests
+import requests.packages.urllib3.util.ssl_
 from lxml import html
+
+requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL'
 
 # cookies
 COOKIES = os.environ.get("YAMIBO_COOKIES")
@@ -30,6 +32,7 @@ HEADERS = {
     "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7,zh-TW;q=0.6,da;q=0.5",
     "Cookie": COOKIES
 }
+
 
 # 签到
 def check_in():
