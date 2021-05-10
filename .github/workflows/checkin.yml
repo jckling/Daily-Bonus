@@ -38,6 +38,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install -U pyopenssl
       - name: Bilibili
         run: python ./Bilibili/bilibili_checkin.py
         if: always()
