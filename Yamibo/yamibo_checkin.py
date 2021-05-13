@@ -56,7 +56,6 @@ def query_credit():
 
     tree = html.fromstring(r.text)
     credit = tree.xpath('//ul[@class="creditl mtm bbda cl"]/li/text()')
-    print([i.strip() for i in credit])
     print("对象:\t %s\t\n"
           "积分:\t %s\t\n"
           "总积分:\t %s 点\t\n"

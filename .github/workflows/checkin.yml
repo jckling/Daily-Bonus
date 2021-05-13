@@ -29,8 +29,6 @@ jobs:
         run: sudo timedatectl set-timezone 'Asia/Shanghai'
       - name: Echo current time
         run: timedatectl
-      - name: modify ssl security level
-        run: export OPENSSL_CONF=openssl.cnf
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
