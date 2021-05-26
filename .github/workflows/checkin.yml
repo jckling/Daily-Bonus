@@ -50,6 +50,3 @@ jobs:
       - name: V2EX
         run: python ./V2EX/v2ex_checkin.py
         if: always()
-      - name: FF14
-        run: python ./FFXIV/ff14_checkin.py
-        if: always()
