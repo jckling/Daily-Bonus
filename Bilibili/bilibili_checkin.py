@@ -9,7 +9,6 @@ import requests
 
 # cookies
 COOKIES = os.environ.get("BILIBILI_COOKIES")
-
 SESSION = requests.Session()
 
 
