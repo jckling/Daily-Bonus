@@ -1,5 +1,10 @@
 # Daily-Bonus
 
+
+[dev](https://github.com/jckling/Daily-Bonus/tree/dev) 分支：使用腾讯云函数实现多种签到，基于 dailycheckin 修改，支持多种消息推送。
+
+[master](https://github.com/jckling/Daily-Bonus/tree/master) 分支：使用 Github Action 签到。
+
 ## TODO
 
 - [x] bilibili 直播（辣条）
@@ -7,9 +12,8 @@
 - [x] 网易云手机端（云贝）
 - [x] v2ex （铜币）
 - [ ] ff14 （积分）
-    - 由于地区限制，已改为部署在国内服务器上运行
-
-PS：V2EX 签到可用插件 [V2EX plus](https://github.com/sciooga/v2ex-plus)
+  - 由于部署在 Github Action 上存在区域问题，登录会遇到验证码；部署云函数应该可以规避，之后测试并添加到 dev 分支
+- [ ] telegram-bot 推送
 
 ## Tools
 

@@ -41,7 +41,7 @@ def check_in():
             print(obj["data"]["specialText"])
             print("本月已签到 %d 天" % obj["data"]["hadSignDays"])
         elif obj["code"] == 1011040:
-            print(obj["message"])
+            print("今日已签到，无法重复签到")
         else:
             print("签到失败")
     except Exception as e:

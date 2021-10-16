@@ -7,10 +7,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
-    environment: checkin_environment
 
     env:
       BILIBILI_COOKIES: ${{ secrets.BILIBILI_COOKIES }}
@@ -18,11 +15,7 @@ jobs:
       MUSIC_PASSWORD: ${{ secrets.MUSIC_PASSWORD }}
       YAMIBO_COOKIES: ${{ secrets.YAMIBO_COOKIES }}
       V2EX_COOKIES: ${{ secrets.V2EX_COOKIES }}
-      FFXIV_USERNAME: ${{ secrets.FFXIV_USERNAME }}
-      FFXIV_PASSWORD: ${{ secrets.FFXIV_PASSWORD }}
-      FFXIV_AREA_NAME: ${{ secrets.FFXIV_AREA_NAME }}
-      FFXIV_SERVER_NAME: ${{ secrets.FFXIV_SERVER_NAME }}
-      FFXIV_ROLE_NAME: ${{ secrets.FFXIV_ROLE_NAME }}
+
     steps:
       - uses: actions/checkout@v2
       - name: Set timezone

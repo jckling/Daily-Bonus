@@ -44,15 +44,17 @@ def fhash():
 def check_in():
     url = "https://bbs.yamibo.com/plugin.php?id=study_daily_attendance:daily_attendance&fhash=" + fhash()
     r = SESSION.get(url, headers=HEADERS)
+    tree = html.fromstring(r.text)
 
     if "签到成功" in r.text:
-        tree = html.fromstring(r.text)
-        print(tree.xpath('//div[@id="messagetext"]/text()'))
+        print(tree.xpath('//div[@id="messagetext"]/text()')[0])
+    elif "已签到" in r.text:
+        print((tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]))
     elif "登录" in r.text:
         print("登录失败，Cookie 可能已经失效")
         return False
     else:
-        print("今日已签到")
+        print("未知错误")
 
     return True
 
