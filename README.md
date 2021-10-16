@@ -24,9 +24,8 @@
 ## GitHub Actions
 
 1. Fork 本仓库
-2. 新建环境（可选）：Settings - Environments - New environment - 新建 checkin_environment
-3. 部署分支（可选）：Deployment branches - All branches 或 Selected branches（选择 master 分支）
-4. 环境变量：Environment secrets - Add Secret
+2. 添加环境变量：Actions - New repository secret
+3. 每天早上 10:30 运行
 
 添加 Secrets 之后可以更新值，但不能修改名称。
 
