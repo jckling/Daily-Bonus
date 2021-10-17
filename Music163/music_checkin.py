@@ -14,7 +14,8 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 # info
 CELLPHONE = os.environ.get('MUSIC_CELLPHONE')
-PASSWORD = os.environ.get('MUSIC_PASSWORD')
+PASSWORD = os.environ.get('MUSIC_PASSWORD') or ""
+msg = []
 
 
 # MD5 哈希
@@ -85,16 +86,23 @@ def login():
     url = "https://music.163.com/weapi/login/cellphone"
     r = SESSION.post(url, data=protect(json.dumps(logindata)), headers=headers)
 
+    global msg
     try:
         obj = r.json()
         if obj["code"] == 200:
-            print("登录成功")
+            msg += [
+                {"name": "登录信息", "value": "登录成功"}
+            ]
             return True
         else:
-            print(obj["message"])
+            msg += [
+                {"name": "登录信息", "value": "登录失败"}
+            ]
             return False
     except json.decoder.JSONDecodeError:
-        print(r.text)
+        msg += [
+            {"name": "登录信息", "value": "登录失败，" + r.text}
+        ]
         return False
 
 
@@ -102,19 +110,32 @@ def login():
 def check_in():
     url = "https://music.163.com/weapi/point/dailyTask"
     r = SESSION.post(url, data=protect('{"type":0}'), headers=HEADERS)
-
     obj = r.json()
+
+    global msg
     if obj["code"] == 200:
-        print("签到成功，获得 %s 积分" % obj["point"])
+        msg += [
+            {"name": "签到信息", "value": "获得 %s 积分" % obj["point"]}
+        ]
     elif obj["code"] == -2:
-        print(obj["msg"])
+        msg += [
+            {"name": "签到信息", "value": obj["msg"]}
+        ]
     else:
-        print("签到失败：", obj["message"])
+        msg += [
+            {"name": "签到信息", "签到失败，": obj["message"]}
+        ]
+
+
+def main():
+    if login():
+        check_in()
+    global msg
+    return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
 
 if __name__ == '__main__':
-    print(" 网易云 签到开始 ".center(60, "="))
-    while not login():
-        pass
-    check_in()
-    print(" 网易云 签到结束 ".center(60, "="), "\n")
+    print(" 网易云音乐 签到开始 ".center(60, "="))
+    if login():
+        check_in()
+    print(" 网易云音乐 签到结束 ".center(60, "="), "\n")

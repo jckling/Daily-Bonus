@@ -12,6 +12,7 @@ from lxml import html
 # cookies
 COOKIES = os.environ.get("YAMIBO_COOKIES")
 SESSION = requests.Session()
+msg = []
 
 HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -46,16 +47,27 @@ def check_in():
     r = SESSION.get(url, headers=HEADERS)
     tree = html.fromstring(r.text)
 
+    global msg
     if "签到成功" in r.text:
-        print(tree.xpath('//div[@id="messagetext"]/text()')[0])
+        msg += [
+            {"name": "账户信息", "value": tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]},
+            {"name": "签到信息", "value": tree.xpath('//div[@id="messagetext"]/text()')[0]}
+        ]
     elif "已签到" in r.text:
-        print((tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]))
+        msg += [
+            {"name": "账户信息", "value": tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]},
+            {"name": "签到信息", "value": tree.xpath('//div[@id="messagetext"]/p/text()')[0]}
+        ]
     elif "登录" in r.text:
-        print("登录失败，Cookie 可能已经失效")
+        msg += [
+            {"name": "签到信息", "value": "登录失败，Cookie 可能已经失效"},
+        ]
         return False
     else:
-        print("未知错误")
-
+        msg += [
+            {"name": "账户信息", "value": "未知错误"},
+        ]
+        return False
     return True
 
 
@@ -67,10 +79,22 @@ def query_credit():
     soup = BeautifulSoup(r.text, "lxml")
     tree = html.fromstring(str(soup))
     credit = tree.xpath('//ul[@class="creditl mtm bbda cl"]/li/text()')
-    print("对象:\t %s\t\n"
-          "积分:\t %s\t\n"
-          "总积分:\t %s 点\t\n"
-          "规则：总积分 = 积分 + 对象/3" % tuple([i.strip() for i in credit]))
+
+    global msg
+    data = [i.strip() for i in credit]
+    msg += [
+        {"name": "对象", "value": data[0]},
+        {"name": "积分", "value": data[1]},
+        {"name": "总积分", "value": data[2]},
+        {"name": "规则", "value": "总积分 = 积分 + 对象/3"},
+    ]
+
+
+def main():
+    if check_in():
+        query_credit()
+    global msg
+    return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
 
 if __name__ == '__main__':

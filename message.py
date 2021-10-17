@@ -5,19 +5,27 @@
 
 import os
 
-import requests
+from Bilibili import bilibili_checkin
+from Music163 import music_checkin
+from V2EX import v2ex_checkin
+from Yamibo import yamibo_checkin
+from telegram import Bot
 
 # info
 TG_USER_ID = os.getenv("TG_USER_ID")
 TG_BOT_TOKEN = os.getenv("TG_BOT_TOKEN")
-CHECKIN_LIST = ["BILIBILI", "V2EX", "YAMIBO", "MUSIC163"]
 
 if __name__ == '__main__':
-    content = "".join([os.getenv(e) for e in CHECKIN_LIST])
-    data = {"chat_id": TG_USER_ID, "text": content, "disable_web_page_preview": "true"}
-    url = f"https://api.telegram.org/bot{TG_BOT_TOKEN}/sendMessage"
+    content = "\n————————————\n\n".join([
+        f"「Bilibili」\n{bilibili_checkin.main()}",
+        f"「网易云音乐」\n{music_checkin.main()}",
+        f"「V2EX」\n{v2ex_checkin.main()}",
+        f"「Yamibo」\n{yamibo_checkin.main()}"
+    ])
 
-    print("Telegram 推送开始".center(60, "="))
-    r = requests.post(url=url, data=data)
-    print(r.text)
-    print("Telegram 推送结束".center(60, "="), "\n")
+    bot = Bot(token=TG_BOT_TOKEN)
+    bot.sendMessage(
+        chat_id=TG_USER_ID,
+        text=content,
+        parse_mode="HTML"
+    )

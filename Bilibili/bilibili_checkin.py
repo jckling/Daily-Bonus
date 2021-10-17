@@ -10,6 +10,7 @@ import requests
 # cookies
 COOKIES = os.environ.get("BILIBILI_COOKIES")
 SESSION = requests.Session()
+msg = []
 
 
 # 签到
@@ -33,21 +34,35 @@ def check_in():
 
     url = "https://api.live.bilibili.com/xlive/web-ucenter/v1/sign/DoSign"
     r = SESSION.get(url, headers=headers)
-
+    global msg
     try:
         obj = r.json()
         if obj["code"] == 0:
-            print(obj["data"]["text"])
-            print(obj["data"]["specialText"])
-            print("本月已签到 %d 天" % obj["data"]["hadSignDays"])
+            msg += [
+                {"name": "签到信息", "value": obj["data"]["text"]},
+                {"name": "特别信息", "value": f'{obj["data"]["specialText"]}, "本月已签到 %d 天" % obj["data"]["hadSignDays"]'},
+            ]
         elif obj["code"] == 1011040:
-            print("今日已签到，无法重复签到")
+            msg += [
+                {"name": "签到信息", "value": "今日已签到，无法重复签到"}
+            ]
         else:
+            msg += [
+                {"name": "签到信息", "value": "签到失败"}
+            ]
             print("签到失败")
     except Exception as e:
-        print("签到异常", e)
+        msg += [
+            {"name": "签到信息", "value": "签到异常，" + str(e)}
+        ]
     else:
         return False
+
+
+def main():
+    check_in()
+    global msg
+    return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
 
 if __name__ == '__main__':

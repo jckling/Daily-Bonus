@@ -12,8 +12,8 @@ from lxml import html
 
 # cookies
 COOKIES = os.environ.get("V2EX_COOKIES")
-
 SESSION = requests.Session()
+msg = []
 
 HEADERS = {
     "Accept": "*/*",
@@ -38,15 +38,22 @@ def get_once():
     url = "https://www.v2ex.com/mission/daily"
     r = SESSION.get(url, headers=HEADERS)
 
+    global msg
     if "你要查看的页面需要先登录" in r.text:
-        print("你要查看的页面需要先登录")
+        msg += [
+            {"name": "登录信息", "value": "你要查看的页面需要先登录"}
+        ]
         return ""
     elif "每日登录奖励已领取" in r.text:
-        msg = re.search(r"已连续登录 \d+ 天", r.text)[0]
-        print("每日登录奖励已领取，" + msg)
+        msg += [
+            {"name": "登录信息", "value": "每日登录奖励已领取，" + re.search(r"已连续登录 \d+ 天", r.text)[0]}
+        ]
         return ""
 
     once = re.search(r"once=(\d+)", r.text).group(1)
+    msg += [
+        {"name": "登录信息", "value": "登录成功"}
+    ]
     return once
 
 
@@ -61,16 +68,18 @@ def check_in(once):
 def query_balance():
     url = "https://www.v2ex.com/balance"
     r = SESSION.get(url, headers=HEADERS)
-
     tree = html.fromstring(r.content)
 
     # 签到结果
+    global msg
     checkin_day_str = tree.xpath('//small[@class="gray"]/text()')[0]
     checkin_day = datetime.datetime.now().astimezone().strptime(checkin_day_str, '%Y-%m-%d %H:%M:%S %z')
     if checkin_day.date() == datetime.date.today():
         # 签到奖励
         bonus = re.search('\d+ 的每日登录奖励 \d+ 铜币', r.text)[0]
-        print(bonus)
+        msg += [
+            {"name": "签到信息", "value": bonus}
+        ]
 
         # 余额
         balance = tree.xpath('//div[@class="balance_area bigger"]/text()')
@@ -78,9 +87,21 @@ def query_balance():
             balance = ['0'] + balance
 
         golden, silver, bronze = [s.strip() for s in balance]
-        print("账户余额：%s 金币，%s 银币，%s 铜币" % (golden, silver, bronze))
+        msg += [
+            {"name": "账户余额", "value": "%s 金币，%s 银币，%s 铜币" % (golden, silver, bronze)}
+        ]
     else:
-        print("签到失败")
+        msg += [
+            {"name": "签到信息", "value": "签到失败"}
+        ]
+
+
+def main():
+    once = get_once()
+    check_in(once)
+    query_balance()
+    global msg
+    return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
 
 if __name__ == '__main__':

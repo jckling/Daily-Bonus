@@ -32,24 +32,5 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Bilibili
-        run: |
-          output=$(python ./Bilibili/bilibili_checkin.py)
-          echo "BILIBILI=$output" >> $GITHUB_ENV
-        if: always()
-      - name: Yamibo
-        run: |
-          output=$(python ./Yamibo/yamibo_checkin.py)
-          echo "YAMIBO=$output" >> $GITHUB_ENV
-        if: always()
-      - name: NetEase Cloud Music
-        run: |
-          output=$(python ./Music163/music_checkin.py)
-          echo "MUSIC163=$output" >> $GITHUB_ENV
-        if: always()
-      - name: V2EX
-        run: |
-          output=$(python ./V2EX/v2ex_checkin.py)
-          echo "V2EX=$output" >> $GITHUB_ENV
-        if: always()
-      - name: Send telegram notification
         run: python ./message.py
+        if: always()
