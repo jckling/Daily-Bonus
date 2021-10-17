@@ -31,6 +31,15 @@
 
 ![](screenshots/config.png)
 
+### Telegram 推送
+
+| Name              | Description |
+| ----------------- | ----------- |
+| TG_USER_ID        | 用户 id      |
+| TG_BOT_TOKEN      | bot token   |
+
+用户 id 的获取方式可以看这个：[How can I send a message to someone with my telegram bot using their Username](https://stackoverflow.com/questions/41664810/how-can-i-send-a-message-to-someone-with-my-telegram-bot-using-their-username)
+
 ### FFXIV
 
 FF14 积分商城签到使用账号密码登录。
@@ -87,3 +96,5 @@ bilibili 直播间使用 Cookie 登录。
 - [构建和测试 Python](https://docs.github.com/cn/actions/guides/building-and-testing-python)
 - [为用户帐户仓库创建密码](https://docs.github.com/cn/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
 - [mengshouer/CheckinBox](https://github.com/mengshouer/CheckinBox)
+- [Github Action use existing Python script and get String output](https://stackoverflow.com/questions/61656704/github-action-use-existing-python-script-and-get-string-output)
+- [Workflow commands for GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions)
