@@ -12,8 +12,8 @@ from Yamibo import yamibo_checkin
 from telegram import Bot
 
 # info
-TG_USER_ID = os.getenv("TG_USER_ID")
-TG_BOT_TOKEN = os.getenv("TG_BOT_TOKEN")
+TG_USER_ID = os.environ.get("TG_USER_ID")
+TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN")
 
 if __name__ == '__main__':
     content = "\n————————————\n\n".join([
