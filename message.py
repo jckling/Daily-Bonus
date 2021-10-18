@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
     content = "\n————————————\n\n".join(content_lst)
     if TG_BOT_TOKEN:
-        bot = Bot(token=TG_BOT_TOKEN, request=proxy)
+        bot = Bot(token=TG_BOT_TOKEN)
         bot.sendMessage(
             chat_id=TG_USER_ID,
             text=content,
