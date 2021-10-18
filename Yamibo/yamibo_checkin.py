@@ -50,12 +50,12 @@ def check_in():
     global msg
     if "签到成功" in r.text:
         msg += [
-            {"name": "账户信息", "value": tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]},
+            # {"name": "账户信息", "value": tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]},
             {"name": "签到信息", "value": tree.xpath('//div[@id="messagetext"]/text()')[0]}
         ]
     elif "已签到" in r.text:
         msg += [
-            {"name": "账户信息", "value": tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]},
+            # {"name": "账户信息", "value": tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]},
             {"name": "签到信息", "value": tree.xpath('//div[@id="messagetext"]/p/text()')[0]}
         ]
     elif "登录" in r.text:
@@ -65,7 +65,7 @@ def check_in():
         return False
     else:
         msg += [
-            {"name": "账户信息", "value": "未知错误"},
+            {"name": "签到信息", "value": "未知错误"},
         ]
         return False
     return True

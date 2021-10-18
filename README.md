@@ -3,7 +3,7 @@
 
 [dev](https://github.com/jckling/Daily-Bonus/tree/dev) 分支：使用腾讯云函数实现多种签到，基于 dailycheckin 修改，支持多种消息推送。
 
-[master](https://github.com/jckling/Daily-Bonus/tree/master) 分支：使用 Github Action 签到。
+[master](https://github.com/jckling/Daily-Bonus/tree/master) 分支：使用 Github Action 签到，用哪个就配置相应的环境变量，默认输出到控制台。
 
 ## TODO
 
@@ -13,7 +13,7 @@
 - [x] v2ex （铜币）
 - [ ] ff14 （积分）
   - 由于部署在 Github Action 上存在区域问题，登录会遇到验证码；部署云函数应该可以规避，之后测试并添加到 dev 分支
-- [ ] telegram-bot 推送
+- [x] telegram-bot 推送
 
 ## Tools
 
