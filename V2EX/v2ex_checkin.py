@@ -88,7 +88,7 @@ def query_balance():
 
         golden, silver, bronze = [s.strip() for s in balance]
         msg += [
-            {"name": "账户余额", "value": "%s 金币，%s 银币，%s 铜币" % (golden, silver, bronze)}
+            {"name": "账户余额", "value": f"{golden} 金币，{silver} 银币，{bronze} 铜币"}
         ]
     else:
         msg += [
@@ -106,7 +106,5 @@ def main():
 
 if __name__ == '__main__':
     print(" V2EX 签到开始 ".center(60, "="))
-    once = get_once()
-    check_in(once)
-    query_balance()
+    print(main())
     print(" V2EX 签到结束 ".center(60, "="), "\n")

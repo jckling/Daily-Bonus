@@ -67,5 +67,5 @@ def main():
 
 if __name__ == '__main__':
     print(" Bilibili 签到开始 ".center(60, "="))
-    check_in()
+    print(main())
     print(" Bilibili 签到结束 ".center(60, "="), "\n")

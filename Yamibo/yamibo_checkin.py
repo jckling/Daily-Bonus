@@ -46,12 +46,13 @@ def check_in():
     url = "https://bbs.yamibo.com/plugin.php?id=study_daily_attendance:daily_attendance&fhash=" + fhash()
     r = SESSION.get(url, headers=HEADERS)
     tree = html.fromstring(r.text)
+    print(r.text)
 
     global msg
     if "签到成功" in r.text:
         msg += [
             # {"name": "账户信息", "value": tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]},
-            {"name": "签到信息", "value": tree.xpath('//div[@id="messagetext"]/text()')[0]}
+            {"name": "签到信息", "value": tree.xpath('//div[@id="messagetext"]/p/text()')[0]}
         ]
     elif "已签到" in r.text:
         msg += [
@@ -99,6 +100,5 @@ def main():
 
 if __name__ == '__main__':
     print(" 300 签到开始 ".center(60, "="))
-    if check_in():
-        query_credit()
+    print(main())
     print(" 300 签到结束 ".center(60, "="), "\n")

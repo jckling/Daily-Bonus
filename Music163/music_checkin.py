@@ -136,6 +136,5 @@ def main():
 
 if __name__ == '__main__':
     print(" 网易云音乐 签到开始 ".center(60, "="))
-    if login():
-        check_in()
+    print(main())
     print(" 网易云音乐 签到结束 ".center(60, "="), "\n")
