@@ -46,7 +46,6 @@ def check_in():
     url = "https://bbs.yamibo.com/plugin.php?id=study_daily_attendance:daily_attendance&fhash=" + fhash()
     r = SESSION.get(url, headers=HEADERS)
     tree = html.fromstring(r.text)
-    print(r.text)
 
     global msg
     if "签到成功" in r.text:
