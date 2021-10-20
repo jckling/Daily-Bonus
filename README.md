@@ -11,6 +11,7 @@
 - [x] yamibo 论坛（对象）
 - [x] 网易云手机端（云贝）
 - [x] v2ex （铜币）
+  - 由于 Github Action 的时区不同，签的是昨天
 - [x] ff14 （积分）
   - 使用 dev 分支 + 腾讯云函数部署
 - [x] telegram-bot 推送
