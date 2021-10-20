@@ -5,7 +5,7 @@
 
 import os
 import re
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 import requests
 from lxml import html
@@ -74,8 +74,8 @@ def query_balance():
     global msg
     checkin_day_str = tree.xpath('//small[@class="gray"]/text()')[0]
     checkin_day = (datetime.now() + timedelta(hours=8)).strptime(checkin_day_str, '%Y-%m-%d %H:%M:%S %z')
-    print(checkin_day, datetime.date.today())
-    if checkin_day.date() == datetime.date.today():
+    print(checkin_day, date.today())
+    if checkin_day.date() == date.today():
         # 签到奖励
         bonus = re.search('\d+ 的每日登录奖励 \d+ 铜币', r.text)[0]
         msg += [
