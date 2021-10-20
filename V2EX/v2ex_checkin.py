@@ -3,9 +3,9 @@
 # @Time     : 2021/04/08 09:43
 # @Author   : Jckling
 
-import datetime
 import os
 import re
+from datetime import datetime, timedelta
 
 import requests
 from lxml import html
@@ -36,7 +36,7 @@ HEADERS = {
 # 获取 once
 def get_once():
     url = "https://www.v2ex.com/mission/daily"
-    r = SESSION.get(url, headers=HEADERS)
+    r = SESSION.get(url)
 
     global msg
     if "你要查看的页面需要先登录" in r.text:
@@ -61,19 +61,20 @@ def get_once():
 def check_in(once):
     # 无内容返回
     url = "https://www.v2ex.com/mission/daily/redeem?once=" + once
-    SESSION.get(url, headers=HEADERS)
+    SESSION.get(url)
 
 
 # 查询
 def query_balance():
     url = "https://www.v2ex.com/balance"
-    r = SESSION.get(url, headers=HEADERS)
+    r = SESSION.get(url)
     tree = html.fromstring(r.content)
 
     # 签到结果
     global msg
     checkin_day_str = tree.xpath('//small[@class="gray"]/text()')[0]
-    checkin_day = datetime.datetime.now().astimezone().strptime(checkin_day_str, '%Y-%m-%d %H:%M:%S %z')
+    checkin_day = (datetime.now() + timedelta(hours=8)).strptime(checkin_day_str, '%Y-%m-%d %H:%M:%S %z')
+    print(checkin_day, datetime.date.today())
     if checkin_day.date() == datetime.date.today():
         # 签到奖励
         bonus = re.search('\d+ 的每日登录奖励 \d+ 铜币', r.text)[0]
@@ -97,6 +98,7 @@ def query_balance():
 
 
 def main():
+    SESSION.headers.update(HEADERS)
     once = get_once()
     check_in(once)
     query_balance()

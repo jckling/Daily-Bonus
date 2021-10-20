@@ -12,35 +12,54 @@ COOKIES = os.environ.get("BILIBILI_COOKIES")
 SESSION = requests.Session()
 msg = []
 
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
+    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7,zh-TW;q=0.6,da;q=0.5",
+    "Referer": "https://www.bilibili.com/",
+    "Connection": "keep-alive",
+    "Cookie": COOKIES
+}
+
+
+# 登录
+def login():
+    url = "https://api.bilibili.com/x/web-interface/nav"
+    r = SESSION.get(url)
+
+    global msg
+    try:
+        obj = r.json()
+        data = obj.get("data", {})
+        if data:
+            if data["isLogin"]:
+                msg += [
+                    {"name": "登录信息", "value": "登录成功"},
+                    {"name": "账户信息", "value": data["uname"]},
+                ]
+                return True
+            else:
+                msg += [
+                    {"name": "登录信息", "value": "登录失败"}
+                ]
+    except Exception as e:
+        msg += [
+            {"name": "登录信息", "value": "登录异常，" + str(e)}
+        ]
+    return False
+
 
 # 签到
 def check_in():
-    headers = {
-        "Host": "api.live.bilibili.com",
-        "Connection": "keep-alive",
-        "sec-ch-ua": '"Google Chrome";v="89", "Chromium";v="89", ";Not A Brand";v="99"',
-        "Accept": "application/json, text/plain, */*",
-        "sec-ch-ua-mobile": "?0",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
-        "Origin": "https://link.bilibili.com",
-        "Sec-Fetch-Site": "same-site",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Dest": "empty",
-        "Referer": "https://link.bilibili.com/p/center/index",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7,zh-TW;q=0.6,da;q=0.5",
-        "Cookie": COOKIES
-    }
-
     url = "https://api.live.bilibili.com/xlive/web-ucenter/v1/sign/DoSign"
-    r = SESSION.get(url, headers=headers)
+    r = SESSION.get(url)
+
     global msg
     try:
         obj = r.json()
         if obj["code"] == 0:
             msg += [
                 {"name": "签到信息", "value": obj["data"]["text"]},
-                {"name": "特别信息", "value": f'{obj["data"]["specialText"]}, "本月已签到 %d 天" % obj["data"]["hadSignDays"]'},
+                {"name": "特别信息", "value": f'{obj["data"]["specialText"]}, "本月已签到 {obj["data"]["hadSignDays"]} 天"'},
             ]
         elif obj["code"] == 1011040:
             msg += [
@@ -50,7 +69,6 @@ def check_in():
             msg += [
                 {"name": "签到信息", "value": "签到失败"}
             ]
-            print("签到失败")
     except Exception as e:
         msg += [
             {"name": "签到信息", "value": "签到异常，" + str(e)}
@@ -60,7 +78,9 @@ def check_in():
 
 
 def main():
-    check_in()
+    SESSION.headers.update(HEADERS)
+    if login():
+        check_in()
     global msg
     return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 

@@ -33,9 +33,10 @@ HEADERS = {
 }
 
 
+# 登录
 def fhash():
     url = "https://bbs.yamibo.com/forum.php"
-    r = SESSION.get(url, headers=HEADERS)
+    r = SESSION.get(url)
     tree = html.fromstring(r.text)
     hash = tree.xpath('//input[@name="formhash"]')[0].attrib['value']
     return hash
@@ -44,18 +45,13 @@ def fhash():
 # 签到
 def check_in():
     url = "https://bbs.yamibo.com/plugin.php?id=study_daily_attendance:daily_attendance&fhash=" + fhash()
-    r = SESSION.get(url, headers=HEADERS)
+    r = SESSION.get(url)
     tree = html.fromstring(r.text)
 
     global msg
-    if "签到成功" in r.text:
+    if "签到成功" in r.text or "已签到" in r.text:
         msg += [
-            # {"name": "账户信息", "value": tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]},
-            {"name": "签到信息", "value": tree.xpath('//div[@id="messagetext"]/p/text()')[0]}
-        ]
-    elif "已签到" in r.text:
-        msg += [
-            # {"name": "账户信息", "value": tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]},
+            {"name": "账户信息", "value": tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]},
             {"name": "签到信息", "value": tree.xpath('//div[@id="messagetext"]/p/text()')[0]}
         ]
     elif "登录" in r.text:
@@ -74,7 +70,7 @@ def check_in():
 # 查询
 def query_credit():
     url = "https://bbs.yamibo.com/home.php?mod=spacecp&ac=credit&op=base"
-    r = SESSION.get(url, headers=HEADERS)
+    r = SESSION.get(url)
 
     soup = BeautifulSoup(r.text, "lxml")
     tree = html.fromstring(str(soup))
@@ -91,6 +87,7 @@ def query_credit():
 
 
 def main():
+    SESSION.headers.update(HEADERS)
     if check_in():
         query_credit()
     global msg

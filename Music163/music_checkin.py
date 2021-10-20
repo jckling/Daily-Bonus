@@ -14,7 +14,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 # info
 CELLPHONE = os.environ.get('MUSIC_CELLPHONE')
-PASSWORD = os.environ.get('MUSIC_PASSWORD') or ""
+PASSWORD = os.environ.get('MUSIC_PASSWORD')
 msg = []
 
 
@@ -101,7 +101,7 @@ def login():
             return False
     except json.decoder.JSONDecodeError:
         msg += [
-            {"name": "登录信息", "value": "登录失败，" + r.text}
+            {"name": "登录信息", "value": f"登录失败，{r.text}"}
         ]
         return False
 
@@ -115,7 +115,7 @@ def check_in():
     global msg
     if obj["code"] == 200:
         msg += [
-            {"name": "签到信息", "value": "获得 %s 积分" % obj["point"]}
+            {"name": "签到信息", "value": f'获得 {obj["point"]} 积分'}
         ]
     elif obj["code"] == -2:
         msg += [
