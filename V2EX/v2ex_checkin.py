@@ -19,24 +19,24 @@ HEADERS = {
     "Accept": "*/*",
     "Accept-Encoding": "gzip, deflate, br",
     "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7,zh-TW;q=0.6,da;q=0.5",
-    # "cache-control": "no-cache",
+    "cache-control": "no-cache",
     "Cookie": COOKIES,
-    # "pragma": "no-cache",
-    # "Referer": "https://www.v2ex.com/",
-    # "sec-ch-ua": '"Google Chrome";v="89", "Chromium";v="89", ";Not A Brand";v="99"',
-    # "sec-ch-ua-mobile": "?0",
-    # "Sec-Fetch-Dest": "empty",
-    # "Sec-Fetch-Mode": "cors",
-    # "Sec-Fetch-Site": "same-origin",
+    "pragma": "no-cache",
+    "Referer": "https://www.v2ex.com/",
+    "sec-ch-ua": '"Google Chrome";v="89", "Chromium";v="89", ";Not A Brand";v="99"',
+    "sec-ch-ua-mobile": "?0",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
-    # "x-requested-with": "X",
+    "x-requested-with": "X",
 }
 
 
 # 获取 once
 def get_once():
     url = "https://www.v2ex.com/mission/daily"
-    r = SESSION.get(url)
+    r = SESSION.get(url, headers=HEADERS)
 
     global msg
     if "你要查看的页面需要先登录" in r.text:
@@ -61,13 +61,13 @@ def get_once():
 def check_in(once):
     # 无内容返回
     url = "https://www.v2ex.com/mission/daily/redeem?once=" + once
-    SESSION.get(url)
+    SESSION.get(url, headers=HEADERS)
 
 
 # 查询
 def query_balance():
     url = "https://www.v2ex.com/balance"
-    r = SESSION.get(url)
+    SESSION.get(url, headers=HEADERS)
     tree = html.fromstring(r.content)
 
     # 签到结果
@@ -98,7 +98,6 @@ def query_balance():
 
 
 def main():
-    SESSION.headers.update(HEADERS)
     once = get_once()
     check_in(once)
     query_balance()
