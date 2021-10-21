@@ -67,7 +67,7 @@ def check_in(once):
 # 查询
 def query_balance():
     url = "https://www.v2ex.com/balance"
-    SESSION.get(url, headers=HEADERS)
+    r = SESSION.get(url, headers=HEADERS)
     tree = html.fromstring(r.content)
 
     # 签到结果
