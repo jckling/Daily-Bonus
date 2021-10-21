@@ -19,17 +19,17 @@ HEADERS = {
     "Accept": "*/*",
     "Accept-Encoding": "gzip, deflate, br",
     "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7,zh-TW;q=0.6,da;q=0.5",
-    "cache-control": "no-cache",
+    # "cache-control": "no-cache",
     "Cookie": COOKIES,
-    "pragma": "no-cache",
-    "Referer": "https://www.v2ex.com/",
-    "sec-ch-ua": '"Google Chrome";v="89", "Chromium";v="89", ";Not A Brand";v="99"',
-    "sec-ch-ua-mobile": "?0",
-    "Sec-Fetch-Dest": "empty",
-    "Sec-Fetch-Mode": "cors",
-    "Sec-Fetch-Site": "same-origin",
+    # "pragma": "no-cache",
+    # "Referer": "https://www.v2ex.com/",
+    # "sec-ch-ua": '"Google Chrome";v="89", "Chromium";v="89", ";Not A Brand";v="99"',
+    # "sec-ch-ua-mobile": "?0",
+    # "Sec-Fetch-Dest": "empty",
+    # "Sec-Fetch-Mode": "cors",
+    # "Sec-Fetch-Site": "same-origin",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
-    "x-requested-with": "X",
+    # "x-requested-with": "X",
 }
 
 
@@ -74,6 +74,7 @@ def query_balance():
     global msg
     checkin_day_str = tree.xpath('//small[@class="gray"]/text()')[0]
     checkin_day = datetime.now().astimezone().strptime(checkin_day_str, '%Y-%m-%d %H:%M:%S %z')
+    print(checkin_day.date(), date.today())
     if checkin_day.date() == date.today():
         # 签到奖励
         bonus = re.search('\d+ 的每日登录奖励 \d+ 铜币', r.text)[0]
