@@ -20,6 +20,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Set timezone
+        run: sudo timedatectl set-timezone 'Asia/Shanghai'
+      - name: Echo current time
+        run: timedatectl
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
