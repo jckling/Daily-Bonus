@@ -26,7 +26,7 @@
 
 1. Fork 本仓库
 2. 添加环境变量：Actions - New repository secret
-3. 每天早上 7:55 运行
+3. 每天早上 7:30 运行
 
 添加 Secrets 之后可以更新值，但不能修改名称。
 

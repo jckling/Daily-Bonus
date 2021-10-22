@@ -3,7 +3,7 @@ name: Daily Bonus
 on:
   push:
   schedule:
-    - cron: '55 23 * * *'
+    - cron: '30 23 * * *'
 
 jobs:
   build:

@@ -59,7 +59,8 @@ def check_in():
         if obj["code"] == 0:
             msg += [
                 {"name": "签到信息", "value": obj["data"]["text"]},
-                {"name": "特别信息", "value": f'{obj["data"]["specialText"]}, "本月已签到 {obj["data"]["hadSignDays"]} 天"'},
+                {"name": "特别信息", "value": f'本月已签到 {obj["data"]["hadSignDays"]} 天' + f'，{obj["data"]["specialText"]}'
+                if obj["data"]["specialText"] else ''},
             ]
         elif obj["code"] == 1011040:
             msg += [
