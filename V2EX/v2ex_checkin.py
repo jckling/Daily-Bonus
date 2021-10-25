@@ -13,8 +13,6 @@ from lxml import html
 # cookies
 COOKIES = os.environ.get("V2EX_COOKIES")
 SESSION = requests.Session()
-# proxies = {'http':'127.0.0.1:7890', 'https':'127.0.0.1:7890'}
-# SESSION.proxies.update(proxies)
 msg = []
 
 HEADERS = {
@@ -43,20 +41,20 @@ def get_once():
     global msg
     if "你要查看的页面需要先登录" in r.text:
         msg += [
-            {"name": "登录信息", "value": "你要查看的页面需要先登录"}
+            {"name": "登录信息", "value": "登录失败，Cookie 可能已经失效"}
         ]
-        return ""
+        return "", False
     elif "每日登录奖励已领取" in r.text:
         msg += [
             {"name": "登录信息", "value": "每日登录奖励已领取，" + re.search(r"已连续登录 \d+ 天", r.text)[0]}
         ]
-        return ""
+        return "", True
 
     once = re.search(r"once=(\d+)", r.text).group(1)
     msg += [
         {"name": "登录信息", "value": "登录成功"}
     ]
-    return once
+    return once, True
 
 
 # 签到
@@ -100,11 +98,12 @@ def query_balance():
 
 
 def main():
+    once, success = get_once()
+    if once:
+        check_in(once)
+    if success:
+        query_balance()
     global msg
-    once = get_once()
-    check_in(once)
-    print(msg)
-    query_balance()
     return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
 
