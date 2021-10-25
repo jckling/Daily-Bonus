@@ -5,7 +5,7 @@
 
 import os
 import re
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 
 import requests
 from lxml import html
@@ -13,6 +13,8 @@ from lxml import html
 # cookies
 COOKIES = os.environ.get("V2EX_COOKIES")
 SESSION = requests.Session()
+# proxies = {'http':'127.0.0.1:7890', 'https':'127.0.0.1:7890'}
+# SESSION.proxies.update(proxies)
 msg = []
 
 HEADERS = {
@@ -98,10 +100,11 @@ def query_balance():
 
 
 def main():
+    global msg
     once = get_once()
     check_in(once)
+    print(msg)
     query_balance()
-    global msg
     return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
 
