@@ -24,9 +24,10 @@
 
 ## GitHub Actions
 
-1. Fork 本仓库
-2. 添加环境变量：Actions - New repository secret
-3. 每天早上 7:30 运行
+1. 右上角点个 star
+2. 右上角 fork 本仓库
+3. 在克隆的仓库中添加环境变量：Actions - New repository secret
+4. 每天早上 7:30 运行
 
 添加 Secrets 之后可以更新值，但不能修改名称。
 
@@ -43,7 +44,7 @@
 
 ### FFXIV
 
-FF14 积分商城签到使用账号密码登录。
+FF14 积分商城签到使用账号密码登录。**请使用 dev 分支 + 腾讯云函数部署**，使用 Github Action 登录时 IP 显示在美国，容易遇到验证码。
 
 | Name              | Description |
 | ----------------- | ----------- |
