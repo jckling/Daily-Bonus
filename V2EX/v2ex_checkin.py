@@ -73,7 +73,7 @@ def query_balance():
     # 签到结果
     global msg
     checkin_day_str = tree.xpath('//small[@class="gray"]/text()')[0]
-    checkin_day = datetime.now().strptime(checkin_day_str, '%Y-%m-%d %H:%M:%S %z')
+    checkin_day = datetime.now().astimezone().strptime(checkin_day_str, '%Y-%m-%d %H:%M:%S %z')
     print(checkin_day.date(), date.today())
     if checkin_day.date() == date.today():
         # 签到奖励
@@ -93,7 +93,8 @@ def query_balance():
         ]
     else:
         msg += [
-            {"name": "签到信息", "value": "签到失败"}
+            {"name": "签到信息", "value": "签到失败"},
+            {"name": "账户余额", "value": "获取失败"}
         ]
 
 
