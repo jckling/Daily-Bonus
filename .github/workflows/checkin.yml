@@ -1,7 +1,6 @@
 name: Daily Bonus
 
 on:
-  push:
   schedule:
     - cron: '30 23 * * *'
 
