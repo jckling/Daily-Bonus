@@ -5,6 +5,7 @@
 
 import os
 import re
+import time
 from datetime import date, datetime
 
 import requests
@@ -99,7 +100,16 @@ def query_balance():
 
 
 def main():
-    once, success = get_once()
+    for i in range(3):
+        try:
+            once, success = get_once()
+        except AttributeError:
+            if i < 3:
+                time.sleep(3)
+                continue
+            else:
+                raise
+        break
     if once:
         check_in(once)
     if success:
