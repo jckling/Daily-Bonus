@@ -1,8 +1,9 @@
 # Daily-Bonus
 
-[dev](https://github.com/jckling/Daily-Bonus/tree/dev) 分支：使用腾讯云函数实现多种签到，基于 dailycheckin 修改，支持多种消息推送。
+[dev](https://github.com/jckling/Daily-Bonus/tree/dev) 分支：使用腾讯云函数实现多种签到，基于 [Sitoi/dailycheckin](https://github.com/Sitoi/dailycheckin) 修改，支持多种消息推送。
 
 [master](https://github.com/jckling/Daily-Bonus/tree/master) 分支：使用 Github Action 签到，用哪个就配置相应的环境变量，默认输出到控制台。
+
 
 ## 说明
 
@@ -15,6 +16,7 @@
 - [x] ff14 （积分）
   - 使用 dev 分支 + 腾讯云函数部署
 - [x] telegram-bot 推送
+- [ ] 哔咔漫画打卡（哔咔）
 
 开发工具
 - Fiddler 4
@@ -25,12 +27,13 @@ Telegram 推送签到结果
 
 ![](screenshots/result.png)
 
+
 ## GitHub Actions
 
-1. 右上角点个 star
-2. 右上角 fork 本仓库
-3. 在克隆的仓库中添加环境变量：Actions - New repository secret
-4. 每天早上 7:30 运行
+0. 右上角点个 star
+1. 右上角 fork 本仓库
+2. 在克隆的仓库中添加环境变量：Actions - New repository secret
+3. 每天早上 7:30 开始运行
 
 添加 Secrets 之后可以更新值，但不能修改名称。
 
@@ -47,7 +50,7 @@ Telegram 推送签到结果
 
 ### FFXIV
 
-FF14 积分商城签到使用账号密码登录。**请使用 dev 分支 + 腾讯云函数部署**，使用 Github Action 登录时 IP 显示在美国，容易遇到验证码。
+FF14 积分商城使用账号和密码登录。**请使用 dev 分支 + 腾讯云函数部署**，使用 Github Action 登录时 IP 显示在美国，容易遇到验证码。
 
 | Name              | Description |
 | ----------------- | ----------- |
@@ -59,7 +62,7 @@ FF14 积分商城签到使用账号密码登录。**请使用 dev 分支 + 腾�
 
 ### NetEase Cloud Music
 
-网易云音乐签到使用手机号和密码登录。
+网易云音乐使用手机号和密码登录。
 
 | Name            | Description |
 | --------------- | ----------- |
@@ -96,6 +99,16 @@ bilibili 直播间使用 Cookie 登录。
 | -------------- | ----------- |
 | YAMIBO_COOKIES | Cookie      |
 
+### Picacomic
+
+哔咔漫画使用账号（邮箱/用户名）和密码登录。
+
+| Name          | Description |
+|---------------|-------------|
+| PICA_EMAIL    | 邮箱或用户名 |
+| PICA_PASSWORD | 密码        |
+
+
 ## 参阅
 
 - [构建和测试 Python](https://docs.github.com/cn/actions/guides/building-and-testing-python)
@@ -103,3 +116,4 @@ bilibili 直播间使用 Cookie 登录。
 - [mengshouer/CheckinBox](https://github.com/mengshouer/CheckinBox)
 - [Github Action use existing Python script and get String output](https://stackoverflow.com/questions/61656704/github-action-use-existing-python-script-and-get-string-output)
 - [Workflow commands for GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions)
+- [niuhuan/pica-go](https://github.com/niuhuan/pica-go)
