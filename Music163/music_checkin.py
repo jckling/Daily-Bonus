@@ -101,7 +101,7 @@ def login():
             return False
     except json.decoder.JSONDecodeError:
         msg += [
-            {"name": "登录信息", "value": f"登录失败，{r.text}"}
+            {"name": "登录信息", "value": f"登录异常，{r.text}"}
         ]
         return False
 
@@ -123,7 +123,7 @@ def check_in():
         ]
     else:
         msg += [
-            {"name": "签到信息", "签到失败，": obj["message"]}
+            {"name": "签到信息", "value": f'签到失败，{obj["message"]}'}
         ]
 
 
