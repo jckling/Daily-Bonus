@@ -128,8 +128,10 @@ def select_role():
         ipid = "1"
     elif AREA_NAME == "莫古力":
         ipid = "6"
-    else:
+    elif AREA_NAME == "猫小胖":
         ipid = "7"
+    elif AREA_NAME == "豆豆柴":
+        ipid = "8"
 
     params = {
         "method": "queryff14rolelist",
