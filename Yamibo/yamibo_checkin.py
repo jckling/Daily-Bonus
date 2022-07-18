@@ -38,8 +38,12 @@ def fhash():
     url = "https://bbs.yamibo.com/forum.php"
     r = SESSION.get(url)
     tree = html.fromstring(r.text)
-    hash = tree.xpath('//input[@name="formhash"]')[0].attrib['value']
-    return hash
+
+    try:
+        hash = tree.xpath('//input[@name="formhash"]')[0].attrib['value']
+        return hash
+    except Exception as e:
+        return ""
 
 
 # 签到
