@@ -10,7 +10,7 @@
 实现功能
 - [x] bilibili 直播（辣条）
 - [x] yamibo 论坛（对象）
-- [x] 网易云手机端（云贝）【已失效】
+- [x] ~~网易云手机端（云贝）~~【已失效】
 - [x] v2ex （铜币）
   - 由于 Github Action 的时区不同，签的是昨天
 - [x] ff14 （积分）
@@ -77,11 +77,12 @@ V2EX 论坛使用 Cookie 登录，目前每 **2 周** 需要更换一次。
 | ------------ | ----------- |
 | V2EX_COOKIES | Cookie      |
 
-登录 v2ex 后，使用开发者工具查看 Cookie ，右键复制即可
+登录 v2ex 后，使用开发者工具查看 Cookie
 
 - Chrome：F12 - Network - F5 - Doc - www.v2ex.com - Headers - Request Headers - cookie
+- 删除 Cookie 中的 ip 信息：例如 `EeqY_2132_lip=111.111.111.111%2C1661066680;`
 
-![](screenshots/cookie.png)
+![](screenshots/v2ex_cookie.png)
 
 ### Bilibili
 
@@ -90,6 +91,12 @@ bilibili 直播间使用 Cookie 登录。
 | Name             | Description |
 | ---------------- | ----------- |
 | BILIBILI_COOKIES | Cookie      |
+
+登录 https://www.bilibili.com/ 后，使用开发者工具查看 Cookie
+
+- Chrome：F12 - Network - F5 - Fetch/XHR - nav - Headers - Request Headers - cookie
+
+![](screenshots/bilibili_cookie.png)
 
 ### Yamibo
 
