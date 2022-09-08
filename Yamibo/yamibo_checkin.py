@@ -18,19 +18,20 @@ HEADERS = {
     "Host": "bbs.yamibo.com",
     "Connection": "keep-alive",
     "Pragma": "no-cache",
-    "Cache-Control": "no-cache",
-    "sec-ch-ua": '".Not/A)Brand";v="99", "Google Chrome";v="103", "Chromium";v="103"',
+    "Cache-Control": "max-age=0",
+    "sec-ch-ua": '"Chromium";v="104", " Not A;Brand";v="99", "Google Chrome";v="104"',
     "sec-ch-ua-mobile": "?0",
     "sec-ch-ua-platform": "Windows",
     "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-Site": "same-origin",
     "Sec-Fetch-Mode": "navigate",
     "Sec-Fetch-User": "?1",
     "Sec-Fetch-Dest": "document",
     "Accept-Encoding": "gzip, deflate, br",
     "Accept-Language": "en,zh-CN;q=0.9,zh;q=0.8,ja;q=0.7,zh-TW;q=0.6,da;q=0.5",
+    "Referer": "https://bbs.yamibo.com/forum.php",
     "Cookie": COOKIES
 }
 
@@ -66,6 +67,7 @@ def check_in():
         ]
         return False
     else:
+        print(r.text)
         msg += [
             {"name": "签到信息", "value": "未知错误"},
         ]
