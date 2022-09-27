@@ -67,7 +67,7 @@ def check_in():
         ]
         return False
     else:
-        print(r.text)
+        print(r.text.encode('utf-8'))
         msg += [
             {"name": "签到信息", "value": "未知错误"},
         ]
