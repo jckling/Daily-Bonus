@@ -6,18 +6,24 @@
 import os
 
 import requests
+import uuid
 
 # cookies
-COOKIES = os.environ.get("BILIBILI_COOKIES")
+COOKIES = {
+    "SESSDATA": os.environ.get("SESSDATA"),
+    "buvid3": os.environ.get("buvid3"),
+    "bili_jct": os.environ.get("bili_jct"),
+    "DedeUserID": os.environ.get("DedeUserID")
+}
 SESSION = requests.Session()
 msg = []
+
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
     "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7,zh-TW;q=0.6,da;q=0.5",
     "Referer": "https://www.bilibili.com/",
     "Connection": "keep-alive",
-    "Cookie": COOKIES
 }
 
 
@@ -79,7 +85,11 @@ def check_in():
 
 
 def main():
+    cookies["buvid3"] = str(uuid.uuid1())
+    cookies["Domain"] = ".bilibili.com"
     SESSION.headers.update(HEADERS)
+    SESSION.cookies.update(COOKIES)
+
     if login():
         check_in()
     global msg
