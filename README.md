@@ -30,14 +30,14 @@ Telegram 推送签到结果
 
 ## GitHub Actions
 
-0. 右上角点个 star
+0. 右上角点个 star（可选）
 1. 右上角 fork 本仓库
-2. 在克隆的仓库中添加环境变量：Actions - New repository secret
+2. 在克隆的仓库中添加环境变量：Settings - Secrets - Actions
 3. 每天早上 7:30 开始运行
 
 添加 Secrets 之后可以更新值，但不能修改名称。
 
-![](screenshots/config.png)
+![](screenshots/settings.png)
 
 ### Telegram 推送
 
@@ -71,7 +71,7 @@ FF14 积分商城使用账号和密码登录。**请使用 dev 分支 + 腾讯�
 
 ### V2EX
 
-V2EX 论坛使用 Cookie 登录，目前每 **2 周** 需要更换一次。
+V2EX 论坛使用 Cookie 登录，每 **一个月** 需要更新一次。
 
 | Name         | Description |
 | ------------ | ----------- |
@@ -86,20 +86,19 @@ V2EX 论坛使用 Cookie 登录，目前每 **2 周** 需要更换一次。
 
 ### Bilibili
 
-bilibili 直播间使用 Cookie 登录，添加了 Cookie 自动更新。
+bilibili 直播间使用 Cookie 登录，需要添加以下三项：
 
-| Name             | Description |
-| ---------------- | ----------- |
-| SESSDATA         | 从cookie获取 |
-| buvid3           | 从cookie获取 |
-| bili_jct         | 从cookie获取 |
-| DedeUserID       | 从cookie获取 |
+| Name                | Description   |
+|---------------------|---------------|
+| BILIBILI_SESSDATA   | 从 Cookie 获取 |
+| BILIBILI_bili_jct   | 从 Cookie 获取 |
+| BILIBILI_DedeUserID | 从 Cookie 获取 |
 
 登录 https://www.bilibili.com/ 后，使用开发者工具查看 Cookie
 
-- Chrome：F12 - Network - F5 - Fetch/XHR - nav - Headers - Request Headers - cookie
+- Chrome：F12 - Network - F5 - Fetch/XHR - nav - Cookies
 
-![](screenshots/bilibili_cookie.png)
+![](screenshots/bilibili_cookies.png)
 
 ### Yamibo
 

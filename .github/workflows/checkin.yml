@@ -9,7 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      BILIBILI_COOKIES: ${{ secrets.BILIBILI_COOKIES }}
+      BILIBILI_bili_jct: ${{ secrets.BILIBILI_bili_jct }}
+      BILIBILI_DedeUserID: ${{ secrets.BILIBILI_DedeUserID }}
+      BILIBILI_SESSDATA: ${{ secrets.BILIBILI_SESSDATA }}
       MUSIC_CELLPHONE: ${{ secrets.MUSIC_CELLPHONE }}
       MUSIC_PASSWORD: ${{ secrets.MUSIC_PASSWORD }}
       YAMIBO_COOKIES: ${{ secrets.YAMIBO_COOKIES }}
