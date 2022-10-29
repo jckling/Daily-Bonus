@@ -86,11 +86,14 @@ V2EX 论坛使用 Cookie 登录，目前每 **2 周** 需要更换一次。
 
 ### Bilibili
 
-bilibili 直播间使用 Cookie 登录。
+bilibili 直播间使用 Cookie 登录，添加了 Cookie 自动更新。
 
 | Name             | Description |
 | ---------------- | ----------- |
-| BILIBILI_COOKIES | Cookie      |
+| SESSDATA         | 从cookie获取 |
+| buvid3           | 从cookie获取 |
+| bili_jct         | 从cookie获取 |
+| DedeUserID       | 从cookie获取 |
 
 登录 https://www.bilibili.com/ 后，使用开发者工具查看 Cookie
 

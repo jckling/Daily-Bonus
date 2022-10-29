@@ -4,11 +4,17 @@
 # @Author   : Jckling
 
 import os
+import uuid
 
 import requests
 
 # cookies
-COOKIES = os.environ.get("BILIBILI_COOKIES")
+COOKIES = {
+    "SESSDATA": os.environ.get("SESSDATA"),
+    "bili_jct": os.environ.get("bili_jct"),
+    "DedeUserID": os.environ.get("DedeUserID"),
+    "Domain": ".bilibili.com"
+}
 SESSION = requests.Session()
 msg = []
 
@@ -17,7 +23,6 @@ HEADERS = {
     "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7,zh-TW;q=0.6,da;q=0.5",
     "Referer": "https://www.bilibili.com/",
     "Connection": "keep-alive",
-    "Cookie": COOKIES
 }
 
 
@@ -60,7 +65,7 @@ def check_in():
             msg += [
                 {"name": "签到信息", "value": obj["data"]["text"]},
                 {"name": "特别信息", "value": f'本月已签到 {obj["data"]["hadSignDays"]} 天' +
-                                          (f'，{obj["data"]["specialText"]}' if obj["data"]["specialText"] else '')},
+                                              (f'，{obj["data"]["specialText"]}' if obj["data"]["specialText"] else '')},
             ]
         elif obj["code"] == 1011040:
             msg += [
@@ -79,7 +84,9 @@ def check_in():
 
 
 def main():
+    COOKIES["buvid3"] = str(uuid.uuid1())
     SESSION.headers.update(HEADERS)
+    SESSION.cookies.update(COOKIES)
     if login():
         check_in()
     global msg
