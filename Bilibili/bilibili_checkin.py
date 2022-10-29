@@ -4,20 +4,19 @@
 # @Author   : Jckling
 
 import os
+import uuid
 
 import requests
-import uuid
 
 # cookies
 COOKIES = {
     "SESSDATA": os.environ.get("SESSDATA"),
-    "buvid3": os.environ.get("buvid3"),
     "bili_jct": os.environ.get("bili_jct"),
-    "DedeUserID": os.environ.get("DedeUserID")
+    "DedeUserID": os.environ.get("DedeUserID"),
+    "Domain": ".bilibili.com"
 }
 SESSION = requests.Session()
 msg = []
-
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
@@ -66,7 +65,7 @@ def check_in():
             msg += [
                 {"name": "签到信息", "value": obj["data"]["text"]},
                 {"name": "特别信息", "value": f'本月已签到 {obj["data"]["hadSignDays"]} 天' +
-                                          (f'，{obj["data"]["specialText"]}' if obj["data"]["specialText"] else '')},
+                                              (f'，{obj["data"]["specialText"]}' if obj["data"]["specialText"] else '')},
             ]
         elif obj["code"] == 1011040:
             msg += [
@@ -85,11 +84,9 @@ def check_in():
 
 
 def main():
-    cookies["buvid3"] = str(uuid.uuid1())
-    cookies["Domain"] = ".bilibili.com"
+    COOKIES["buvid3"] = str(uuid.uuid1())
     SESSION.headers.update(HEADERS)
     SESSION.cookies.update(COOKIES)
-
     if login():
         check_in()
     global msg
