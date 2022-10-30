@@ -14,7 +14,9 @@ jobs:
       BILIBILI_SESSDATA: ${{ secrets.BILIBILI_SESSDATA }}
       MUSIC_CELLPHONE: ${{ secrets.MUSIC_CELLPHONE }}
       MUSIC_PASSWORD: ${{ secrets.MUSIC_PASSWORD }}
-      YAMIBO_COOKIES: ${{ secrets.YAMIBO_COOKIES }}
+      YAMIBO_yjs_js_security_passport: ${{ secrets.YAMIBO_yjs_js_security_passport }}
+      YAMIBO_EeqY_2132_saltkey: ${{ secrets.YAMIBO_EeqY_2132_saltkey }}
+      YAMIBO_EeqY_2132_auth: ${{ secrets.YAMIBO_EeqY_2132_auth }}
       V2EX_COOKIES: ${{ secrets.V2EX_COOKIES }}
       PICA_EMAIL: ${{ secrets.PICA_EMAIL }}
       PICA_PASSWORD: ${{ secrets.PICA_PASSWORD }}

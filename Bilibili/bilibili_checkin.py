@@ -13,7 +13,6 @@ COOKIES = {
     "bili_jct": os.environ.get("BILIBILI_bili_jct"),
     "DedeUserID": os.environ.get("BILIBILI_DedeUserID"),
     "SESSDATA": os.environ.get("BILIBILI_SESSDATA"),
-    "Domain": ".bilibili.com"
 }
 SESSION = requests.Session()
 msg = []

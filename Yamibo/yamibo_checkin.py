@@ -10,7 +10,11 @@ from bs4 import BeautifulSoup
 from lxml import html
 
 # cookies
-COOKIES = os.environ.get("YAMIBO_COOKIES")
+COOKIES = {
+    "yjs_js_security_passport": os.environ.get("YAMIBO_yjs_js_security_passport"),
+    "EeqY_2132_saltkey": os.environ.get("YAMIBO_EeqY_2132_saltkey"),
+    "EeqY_2132_auth": os.environ.get("YAMIBO_EeqY_2132_auth"),
+}
 SESSION = requests.Session()
 msg = []
 
@@ -23,7 +27,7 @@ HEADERS = {
     "sec-ch-ua-mobile": "?0",
     "sec-ch-ua-platform": "Windows",
     "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     "Sec-Fetch-Site": "same-origin",
     "Sec-Fetch-Mode": "navigate",
@@ -32,7 +36,6 @@ HEADERS = {
     "Accept-Encoding": "gzip, deflate, br",
     "Accept-Language": "en,zh-CN;q=0.9,zh;q=0.8,ja;q=0.7,zh-TW;q=0.6,da;q=0.5",
     "Referer": "https://bbs.yamibo.com/forum.php",
-    "Cookie": COOKIES
 }
 
 
@@ -67,7 +70,6 @@ def check_in():
         ]
         return False
     else:
-        print(r.text.encode('utf-8'))
         msg += [
             {"name": "签到信息", "value": "未知错误"},
         ]
@@ -96,6 +98,7 @@ def query_credit():
 
 def main():
     SESSION.headers.update(HEADERS)
+    SESSION.cookies.update(COOKIES)
     if check_in():
         query_credit()
     global msg
