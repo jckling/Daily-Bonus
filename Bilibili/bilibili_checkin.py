@@ -10,8 +10,8 @@ import requests
 
 # cookies
 COOKIES = {
-    "bili_jct": os.environ.get("BILIBILI_bili_jct"),
-    "DedeUserID": os.environ.get("BILIBILI_DedeUserID"),
+    "bili_jct": os.environ.get("BILIBILI_BILI_JCT"),
+    "DedeUserID": os.environ.get("BILIBILI_DEDEUSERID"),
     "SESSDATA": os.environ.get("BILIBILI_SESSDATA"),
 }
 SESSION = requests.Session()

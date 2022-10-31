@@ -1,6 +1,9 @@
 name: Daily Bonus
 
 on:
+  push:
+    branches:
+      - master
   schedule:
     - cron: '30 23 * * *'
 
@@ -9,14 +12,14 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      BILIBILI_bili_jct: ${{ secrets.BILIBILI_bili_jct }}
-      BILIBILI_DedeUserID: ${{ secrets.BILIBILI_DedeUserID }}
+      BILIBILI_BILI_JCT: ${{ secrets.BILIBILI_BILI_JCT }}
+      BILIBILI_DEDEUSERID: ${{ secrets.BILIBILI_DEDEUSERID }}
       BILIBILI_SESSDATA: ${{ secrets.BILIBILI_SESSDATA }}
       MUSIC_CELLPHONE: ${{ secrets.MUSIC_CELLPHONE }}
       MUSIC_PASSWORD: ${{ secrets.MUSIC_PASSWORD }}
-      YAMIBO_yjs_js_security_passport: ${{ secrets.YAMIBO_yjs_js_security_passport }}
-      YAMIBO_EeqY_2132_saltkey: ${{ secrets.YAMIBO_EeqY_2132_saltkey }}
-      YAMIBO_EeqY_2132_auth: ${{ secrets.YAMIBO_EeqY_2132_auth }}
+      YAMIBO_YJS_JS_SECURITY_PASSPORT: ${{ secrets.YAMIBO_YJS_JS_SECURITY_PASSPORT }}
+      YAMIBO_EEQY_2132_SALTKEY: ${{ secrets.YAMIBO_EEQY_2132_SALTKEY }}
+      YAMIBO_EEQY_2132_AUTH: ${{ secrets.YAMIBO_EEQY_2132_AUTH }}
       V2EX_COOKIES: ${{ secrets.V2EX_COOKIES }}
       PICA_EMAIL: ${{ secrets.PICA_EMAIL }}
       PICA_PASSWORD: ${{ secrets.PICA_PASSWORD }}

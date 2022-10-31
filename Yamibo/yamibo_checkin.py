@@ -11,9 +11,9 @@ from lxml import html
 
 # cookies
 COOKIES = {
-    "yjs_js_security_passport": os.environ.get("YAMIBO_yjs_js_security_passport"),
-    "EeqY_2132_saltkey": os.environ.get("YAMIBO_EeqY_2132_saltkey"),
-    "EeqY_2132_auth": os.environ.get("YAMIBO_EeqY_2132_auth"),
+    "yjs_js_security_passport": os.environ.get("YAMIBO_YJS_JS_SECURITY_PASSPORT"),
+    "EeqY_2132_saltkey": os.environ.get("YAMIBO_EEQY_2132_SALTKEY"),
+    "EeqY_2132_auth": os.environ.get("YAMIBO_EEQY_2132_AUTH")
 }
 SESSION = requests.Session()
 msg = []

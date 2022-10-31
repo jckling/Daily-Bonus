@@ -28,7 +28,7 @@ Telegram 推送签到结果
 ![](screenshots/result.png)
 
 
-## GitHub Actions
+## 使用方式
 
 0. 右上角点个 star（可选）
 1. 右上角 fork 本仓库
@@ -39,6 +39,13 @@ Telegram 推送签到结果
 
 ![](screenshots/settings.png)
 
+
+更新方式：打开自己的仓库页面，点击 `Sync fork - Update branch` 即可。
+
+![](screenshots/update.jpg)
+
+
+## 配置
 ### Telegram 推送
 
 | Name              | Description |
@@ -47,27 +54,6 @@ Telegram 推送签到结果
 | TG_BOT_TOKEN      | bot token   |
 
 用户 id 的获取方式可以看这个：[How can I send a message to someone with my telegram bot using their Username](https://stackoverflow.com/questions/41664810/how-can-i-send-a-message-to-someone-with-my-telegram-bot-using-their-username)
-
-### FFXIV
-
-FF14 积分商城使用账号和密码登录。**请使用 dev 分支 + 腾讯云函数部署**，使用 Github Action 登录时 IP 显示在美国，容易遇到验证码。
-
-| Name              | Description |
-| ----------------- | ----------- |
-| FFIXV_USERNAME    | 账号        |
-| FFIXV_PASSWORD    | 密码        |
-| FFXIV_AREA_NAME   | 大区名      |
-| FFXIV_SERVER_NAME | 服务器名    |
-| FFXIV_ROLE_NAME   | 角色名      |
-
-### NetEase Cloud Music
-
-网易云音乐使用手机号和密码登录。
-
-| Name            | Description |
-| --------------- | ----------- |
-| MUSIC_CELLPHONE | 手机号      |
-| MUSIC_PASSWORD  | 密码        |
 
 ### V2EX
 
@@ -102,12 +88,34 @@ bilibili 直播间使用 Cookie 登录，需要添加以下三项：
 ### Yamibo
 
 300 论坛使用 Cookie 登录，需要添加以下三项：
+- 登录 https://bbs.yamibo.com/forum.php 后，使用开发者工具查看 Cookie
 
 | Name                            | Description                                 |
 | ------------------------------- |---------------------------------------------|
 | YAMIBO_yjs_js_security_passport | 从 Cookie 获取，`yjs_js_security_passport`   |
 | YAMIBO_EeqY_2132_saltkey        | 从 Cookie 获取，`EeqY_2132_saltkey`          |
 | YAMIBO_EeqY_2132_auth           | 从 Cookie 获取，`EeqY_2132_auth`             |
+
+### FFXIV
+
+FF14 积分商城使用账号和密码登录。**请使用 dev 分支 + 腾讯云函数部署**，使用 Github Action 登录时 IP 显示在美国，容易遇到验证码。
+
+| Name              | Description |
+| ----------------- | ----------- |
+| FFIXV_USERNAME    | 账号        |
+| FFIXV_PASSWORD    | 密码        |
+| FFXIV_AREA_NAME   | 大区名      |
+| FFXIV_SERVER_NAME | 服务器名    |
+| FFXIV_ROLE_NAME   | 角色名      |
+
+### NetEase Cloud Music
+
+网易云音乐使用手机号和密码登录。
+
+| Name            | Description |
+| --------------- | ----------- |
+| MUSIC_CELLPHONE | 手机号      |
+| MUSIC_PASSWORD  | 密码        |
 
 ### Picacomic
 
