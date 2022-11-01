@@ -87,12 +87,11 @@ bilibili 直播间使用 Cookie 登录，需要添加以下三项：
 
 ### Yamibo
 
-300 论坛使用 Cookie 登录，需要添加以下三项：
+300 论坛使用 Cookie 登录，需要添加以下两项：
 - 登录 https://bbs.yamibo.com/forum.php 后，使用开发者工具查看 Cookie
 
 | Name                            | Description                                 |
 | ------------------------------- |---------------------------------------------|
-| YAMIBO_yjs_js_security_passport | 从 Cookie 获取，`yjs_js_security_passport`   |
 | YAMIBO_EeqY_2132_saltkey        | 从 Cookie 获取，`EeqY_2132_saltkey`          |
 | YAMIBO_EeqY_2132_auth           | 从 Cookie 获取，`EeqY_2132_auth`             |
 

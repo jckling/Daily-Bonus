@@ -5,44 +5,27 @@
 
 import os
 
+import cloudscraper
 import requests
 from bs4 import BeautifulSoup
 from lxml import html
 
 # cookies
 COOKIES = {
-    "yjs_js_security_passport": os.environ.get("YAMIBO_YJS_JS_SECURITY_PASSPORT"),
     "EeqY_2132_saltkey": os.environ.get("YAMIBO_EEQY_2132_SALTKEY"),
-    "EeqY_2132_auth": os.environ.get("YAMIBO_EEQY_2132_AUTH")
+    "EeqY_2132_auth": os.environ.get("YAMIBO_EEQY_2132_AUTH"),
 }
 SESSION = requests.Session()
 msg = []
 
-HEADERS = {
-    "Host": "bbs.yamibo.com",
-    "Connection": "keep-alive",
-    "Pragma": "no-cache",
-    "Cache-Control": "max-age=0",
-    "sec-ch-ua": '"Chromium";v="104", " Not A;Brand";v="99", "Google Chrome";v="104"',
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "Windows",
-    "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-    "Sec-Fetch-Site": "same-origin",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-User": "?1",
-    "Sec-Fetch-Dest": "document",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Accept-Language": "en,zh-CN;q=0.9,zh;q=0.8,ja;q=0.7,zh-TW;q=0.6,da;q=0.5",
-    "Referer": "https://bbs.yamibo.com/forum.php",
-}
+# Bypass Cloudflare
+scraper = cloudscraper.create_scraper(sess=SESSION)
 
 
 # 登录
 def fhash():
     url = "https://bbs.yamibo.com/forum.php"
-    r = SESSION.get(url)
+    r = scraper.get(url)
     tree = html.fromstring(r.text)
 
     try:
@@ -55,7 +38,7 @@ def fhash():
 # 签到
 def check_in():
     url = "https://bbs.yamibo.com/plugin.php?id=study_daily_attendance:daily_attendance&fhash=" + fhash()
-    r = SESSION.get(url)
+    r = scraper.get(url)
     tree = html.fromstring(r.text)
 
     global msg
@@ -97,7 +80,6 @@ def query_credit():
 
 
 def main():
-    SESSION.headers.update(HEADERS)
     SESSION.cookies.update(COOKIES)
     if check_in():
         query_credit()
