@@ -28,7 +28,7 @@ if __name__ == '__main__':
         content_lst.append(f"「网易云音乐」\n{music_checkin.main()}")
     if os.environ.get("V2EX_COOKIES"):
         content_lst.append(f"「V2EX」\n{v2ex_checkin.main()}")
-    if os.environ.get("YAMIBO_YJS_JS_SECURITY_PASSPORT"):
+    if os.environ.get("YAMIBO_EEQY_2132_AUTH"):
         content_lst.append(f"「Yamibo」\n{yamibo_checkin.main()}")
     if os.environ.get("PICA_EMAIL"):
         content_lst.append(f"「哔咔漫画」\n{pica_checkin.main()}")
