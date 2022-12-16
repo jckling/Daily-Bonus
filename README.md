@@ -1,5 +1,11 @@
 # Daily-Bonus
 
+<p>
+    <a href="https://github.com/jckling/Daily-Bonus/stargazers"><img src="https://img.shields.io/github/stars/jckling/Daily-Bonus" alt="GitHub stars"></a>
+    <a href="https://github.com/jckling/Daily-Bonus/network/members"><img src="https://img.shields.io/github/forks/jckling/Daily-Bonus" alt="GitHub forks"></a>
+    <a href="https://github.com/jckling/Daily-Bonus/issues"><img src="https://img.shields.io/github/issues/jckling/Daily-Bonus" alt="GitHub issues"></a>
+</p>
+
 [dev](https://github.com/jckling/Daily-Bonus/tree/dev) 分支：使用腾讯云函数签到，基于 [Sitoi/dailycheckin](https://github.com/Sitoi/dailycheckin) 修改，支持多种消息推送。
 
 [master](https://github.com/jckling/Daily-Bonus/tree/master) 分支：使用 Github Action 签到，用哪个就配置相应的环境变量，默认输出到控制台，支持 Telegram 消息推送。
@@ -8,7 +14,7 @@
 ## 说明
 
 实现功能
-- [x] bilibili 直播（辣条）
+- [x] bilibili 直播（辣条）【修复中】
 - [x] yamibo 论坛（对象）
 - [x] ~~网易云手机端（云贝）~~【已失效】
 - [x] v2ex （铜币）
@@ -18,11 +24,6 @@
 - [x] telegram-bot 推送
 - [ ] 哔咔漫画打卡（哔咔）
 
-开发工具
-- Fiddler 4
-- Python 3.8.5
-- GitHub Actions
-
 Telegram 推送签到结果
 
 ![](screenshots/result.png)
@@ -30,17 +31,17 @@ Telegram 推送签到结果
 
 ## 使用方式
 
-0. 右上角点个 star（可选）
-1. 右上角 fork 本仓库
-2. 在克隆的仓库中添加环境变量：Settings - Secrets - Actions
-3. 每天早上 7:30 开始运行
+0. 右上角点个 **star**（可选）
+1. 右上角 **fork** 本仓库
+2. 在克隆的仓库中添加环境变量：Settings - Secrets - Actions - New repository secret
+3. 北京时间每天早上 7:30 开始运行
 
 添加 Secrets 之后可以更新值，但不能修改名称。
 
 ![](screenshots/settings.png)
 
 
-更新方式：打开自己的仓库页面，点击 `Sync fork - Update branch` 即可。
+更新方式：打开自己的仓库页面，点击 `Sync fork - Update branch` 即可，注意更新会触发一次签到。
 
 ![](screenshots/update.jpg)
 
@@ -57,16 +58,15 @@ Telegram 推送签到结果
 
 ### V2EX
 
-V2EX 论坛使用 Cookie 登录，每 **一个月** 需要更新一次。
+V2EX 论坛使用 Cookie 登录：
 
 | Name         | Description |
 | ------------ | ----------- |
 | V2EX_COOKIES | Cookie      |
 
 登录 v2ex 后，使用开发者工具查看 Cookie
-
 - Chrome：F12 - Network - F5 - Doc - www.v2ex.com - Headers - Request Headers - cookie
-- 删除 Cookie 中的 ip 信息：例如 `EeqY_2132_lip=111.111.111.111%2C1661066680;`
+- 删除 Cookie 中的 ip 信息（如果有）：例如 `EeqY_2132_lip=111.111.111.111%2C1661066680;`
 
 ![](screenshots/v2ex_cookie.png)
 
@@ -97,7 +97,7 @@ bilibili 直播间使用 Cookie 登录，需要添加以下三项：
 
 ### FFXIV
 
-FF14 积分商城使用账号和密码登录。**请使用 dev 分支 + 腾讯云函数部署**，使用 Github Action 登录时 IP 显示在美国，容易遇到验证码。
+FF14 积分商城使用账号和密码登录。**请使用 dev 分支 + 腾讯云函数部署**，使用 Github Action 登录时 IP 在美国，容易遇到验证码。
 
 | Name              | Description |
 | ----------------- | ----------- |
@@ -126,11 +126,28 @@ FF14 积分商城使用账号和密码登录。**请使用 dev 分支 + 腾讯�
 | PICA_PASSWORD | 密码         |
 
 
-## 参阅
+## 许可证
 
+[MIT](https://github.com/jckling/Daily-Bonus/blob/master/LICENSE)
+
+
+## 赞助
+
+开发工具
+- Fiddler 4
+- Python 3.8.5
+- GitHub Actions
+
+参阅
 - [构建和测试 Python](https://docs.github.com/cn/actions/guides/building-and-testing-python)
 - [为用户帐户仓库创建密码](https://docs.github.com/cn/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
 - [mengshouer/CheckinBox](https://github.com/mengshouer/CheckinBox)
 - [Github Action use existing Python script and get String output](https://stackoverflow.com/questions/61656704/github-action-use-existing-python-script-and-get-string-output)
 - [Workflow commands for GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions)
 - [niuhuan/pica-go](https://github.com/niuhuan/pica-go)
+
+支持
+<p>
+    <img src="https://raw.githubusercontent.com/jckling/jckling.github.io/master/img/jckling/alipay.jpg" width="35%"/>
+    <img src="https://raw.githubusercontent.com/jckling/jckling.github.io/master/img/jckling/wechat.png" width="35%"/>
+</p>
