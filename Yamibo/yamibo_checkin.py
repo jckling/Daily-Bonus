@@ -15,16 +15,20 @@ COOKIES = {
     "EeqY_2132_saltkey": os.environ.get("YAMIBO_EEQY_2132_SALTKEY"),
     "EeqY_2132_auth": os.environ.get("YAMIBO_EEQY_2132_AUTH"),
 }
+
+# session
 SESSION = requests.Session()
-msg = []
 
 # Bypass Cloudflare
 scraper = cloudscraper.create_scraper(sess=SESSION)
 
+# message
+msg = []
+
 
 # 登录
 def fhash():
-    url = "https://bbs.yamibo.com/forum.php"
+    url = "https://bbs.yamibo.com"
     r = scraper.get(url)
     tree = html.fromstring(r.text)
 
@@ -32,20 +36,27 @@ def fhash():
         hash = tree.xpath('//input[@name="formhash"]')[0].attrib['value']
         return hash
     except Exception as e:
+        print("no form hash")
+        print(r.headers)
         return ""
 
 
 # 签到
 def check_in():
-    url = "https://bbs.yamibo.com/plugin.php?id=study_daily_attendance:daily_attendance&fhash=" + fhash()
+    url = "https://bbs.yamibo.com/plugin.php?id=zqlj_sign&sign=" + fhash()
     r = scraper.get(url)
     tree = html.fromstring(r.text)
 
     global msg
-    if "签到成功" in r.text or "已签到" in r.text:
+    if "打卡成功" in r.text:
         msg += [
-            {"name": "账户信息", "value": tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]},
-            {"name": "签到信息", "value": tree.xpath('//div[@id="messagetext"]/p/text()')[0]}
+            {"name": "账户信息", "value": tree.xpath('//*[@id="avtnav_menu"]/a[1]/text()')[0]},
+            {"name": "签到信息", "value": "签到成功"}
+        ]
+    elif "打过卡" in r.text:
+        msg += [
+            {"name": "账户信息", "value": tree.xpath('//*[@id="avtnav_menu"]/a[1]/text()')[0]},
+            {"name": "签到信息", "value": "已签到"}
         ]
     elif "登录" in r.text:
         msg += [
@@ -62,7 +73,7 @@ def check_in():
 
 # 查询
 def query_credit():
-    url = "https://bbs.yamibo.com/home.php?mod=spacecp&ac=credit&op=base"
+    url = "https://bbs.yamibo.com/home.php?mod=spacecp&ac=credit"
     r = SESSION.get(url)
 
     soup = BeautifulSoup(r.text, "lxml")
@@ -72,9 +83,9 @@ def query_credit():
     global msg
     data = [i.strip() for i in credit]
     msg += [
-        {"name": "对象", "value": data[0]},
-        {"name": "积分", "value": data[1]},
-        {"name": "总积分", "value": data[2]},
+        {"name": "对象", "value": data[1]},
+        {"name": "积分", "value": data[2]},
+        {"name": "总积分", "value": data[3]},
         {"name": "规则", "value": "总积分 = 积分 + 对象/3"},
     ]
 
