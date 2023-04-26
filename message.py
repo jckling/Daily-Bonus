@@ -32,6 +32,8 @@ if __name__ == '__main__':
         content_lst.append(f"「Yamibo」\n{yamibo_checkin.main()}")
     if os.environ.get("PICA_EMAIL"):
         content_lst.append(f"「哔咔漫画」\n{pica_checkin.main()}")
+    if os.environ.get("YURIFANS_EMAIL"):
+        content_lst.append(f"「Yurifans」\n{pica_checkin.main()}")
     content_lst.append(
         f"开始时间: {utc_time}\n"
         f"任务用时: {int(time.time() - start_time)} 秒\n"
