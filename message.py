@@ -12,6 +12,7 @@ from Music163 import music_checkin
 from Picacomic import pica_checkin
 from V2EX import v2ex_checkin
 from Yamibo import yamibo_checkin
+from Yurifans import yurifans_checkin
 from telegram import Bot
 
 # info
@@ -33,7 +34,7 @@ if __name__ == '__main__':
     if os.environ.get("PICA_EMAIL"):
         content_lst.append(f"「哔咔漫画」\n{pica_checkin.main()}")
     if os.environ.get("YURIFANS_EMAIL"):
-        content_lst.append(f"「Yurifans」\n{pica_checkin.main()}")
+        content_lst.append(f"「Yurifans」\n{yurifans_checkin.main()}")
     content_lst.append(
         f"开始时间: {utc_time}\n"
         f"任务用时: {int(time.time() - start_time)} 秒\n"
