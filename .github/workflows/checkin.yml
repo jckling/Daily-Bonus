@@ -19,6 +19,8 @@ jobs:
       MUSIC_PASSWORD: ${{ secrets.MUSIC_PASSWORD }}
       YAMIBO_EEQY_2132_SALTKEY: ${{ secrets.YAMIBO_EEQY_2132_SALTKEY }}
       YAMIBO_EEQY_2132_AUTH: ${{ secrets.YAMIBO_EEQY_2132_AUTH }}
+      YURIFANS_EMAIL: ${{ secrets.YURIFANS_EMAIL }}
+      YURIFANS_PASSWORD: ${{ secrets.YURIFANS_PASSWORD }}
       V2EX_COOKIES: ${{ secrets.V2EX_COOKIES }}
       PICA_EMAIL: ${{ secrets.PICA_EMAIL }}
       PICA_PASSWORD: ${{ secrets.PICA_PASSWORD }}

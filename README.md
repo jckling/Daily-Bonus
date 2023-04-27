@@ -17,6 +17,7 @@
 - [x] bilibili 直播（辣条）【修复中】
 - [x] yamibo 论坛（对象）
 - [x] ~~网易云手机端（云贝）~~【已失效】
+- [x] Yurifans（积分）
 - [x] v2ex （铜币）
     - 由于 Github Action 的时区不同，签的是昨天
 - [x] ff14 （积分）
@@ -125,6 +126,14 @@ FF14 积分商城使用账号和密码登录。**请使用 dev 分支 + 腾讯�
 | PICA_EMAIL    | 邮箱或用户名  |
 | PICA_PASSWORD | 密码         |
 
+### Yurifans
+
+Yurifans使用账号（邮箱）和密码登录。
+
+| Name              | Description  |
+|-------------------|--------------|
+| YURIFANS_EMAIL    | 邮箱         |
+| YURIFANS_PASSWORD | 密码         |
 
 ## 许可证
 
