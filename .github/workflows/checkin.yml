@@ -26,13 +26,13 @@ jobs:
       TG_USER_ID: ${{ secrets.TG_USER_ID }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set timezone
         run: sudo timedatectl set-timezone 'Asia/Shanghai'
       - name: Echo current time
         run: timedatectl
       - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.8'
           architecture: 'x64'
