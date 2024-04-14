@@ -55,7 +55,7 @@ def fhash():
     except Exception as e:
         print("no form hash")
         global msg
-        msg += [{"name": "签到信息", "value": e}]
+        msg += [{"name": "fhash", "value": e}]
         return ""
 
 
@@ -84,7 +84,7 @@ def check_in():
             return False
         return True
     except Exception as e:
-        msg += [{"name": "签到信息", "value": e}]
+        msg += [{"name": "check_in", "value": e}]
         return False
 
 
