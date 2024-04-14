@@ -3,9 +3,7 @@ name: Daily Bonus
 on:
   push:
     branches:
-      - master
-  schedule:
-    - cron: '30 23 * * *'
+      - test
 
 jobs:
   build:
