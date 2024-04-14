@@ -9,50 +9,30 @@ import uuid
 import requests
 
 # cookies
-COOKIES = {
-    "bili_jct": os.environ.get("BILIBILI_BILI_JCT"),
-    "DedeUserID": os.environ.get("BILIBILI_DEDEUSERID"),
-    "SESSDATA": os.environ.get("BILIBILI_SESSDATA"),
-}
+COOKIES = os.environ.get("BILIBILI_COOKIES")
 SESSION = requests.Session()
 msg = []
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
-    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7,zh-TW;q=0.6,da;q=0.5",
-    "Referer": "https://www.bilibili.com/",
+    "Host": "api.live.bilibili.com",
     "Connection": "keep-alive",
+    "sec-ch-ua": '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
+    "Accept": "application/json, text/plain, */*",
+    "sec-ch-ua-mobile": "?0",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+    "sec-ch-ua-platform": "Windows",
+    "Origin": "https://live.bilibili.com",
+    "Sec-Fetch-Site": "same-site",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Dest": "empty",
+    "Referer": "https://live.bilibili.com/",
+    "Accept-Encoding": "gzip, deflate, br, zstd",
+    "Accept-Language": "en,zh-CN;q=0.9,zh;q=0.8,ja;q=0.7,zh-TW;q=0.6",
+    "Cookie": COOKIES,
 }
 
 
-# 登录
-def login():
-    url = "https://api.bilibili.com/x/web-interface/nav"
-    r = SESSION.get(url)
-
-    global msg
-    try:
-        obj = r.json()
-        data = obj.get("data", {})
-        if data:
-            if data["isLogin"]:
-                msg += [
-                    {"name": "登录信息", "value": "登录成功"},
-                    {"name": "账户信息", "value": data["uname"]},
-                ]
-                return True
-            else:
-                msg += [
-                    {"name": "登录信息", "value": "登录失败"}
-                ]
-    except Exception as e:
-        msg += [
-            {"name": "登录信息", "value": "登录异常，" + str(e)}
-        ]
-    return False
-
-
-# 签到
+# 直播间签到
 def check_in():
     url = "https://api.live.bilibili.com/xlive/web-ucenter/v1/sign/DoSign"
     r = SESSION.get(url)
@@ -76,18 +56,13 @@ def check_in():
             ]
     except Exception as e:
         msg += [
-            {"name": "签到信息", "value": "签到异常，" + str(e)}
+            {"name": "check_in", "value": e}
         ]
-    else:
-        return False
 
 
 def main():
-    COOKIES["buvid3"] = str(uuid.uuid1())
     SESSION.headers.update(HEADERS)
-    SESSION.cookies.update(COOKIES)
-    if login():
-        check_in()
+    check_in()
     global msg
     return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
