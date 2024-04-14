@@ -3,7 +3,7 @@ name: Daily Bonus
 on:
   push:
     branches:
-      - test
+      - yamibo
 
 jobs:
   build:
