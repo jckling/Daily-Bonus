@@ -12,7 +12,6 @@ from lxml import html
 
 # cookies
 COOKIES = os.environ.get("YAMIBO_COOKIES")
-SESSION = requests.Session()
 msg = []
 
 HEADERS = {
@@ -41,13 +40,13 @@ HEADERS = {
 }
 
 # Bypass Cloudflare
-scraper = cloudscraper.create_scraper(sess=SESSION)
+SESSION = cloudscraper.create_scraper()
 
 
 # 登录
 def fhash():
     url = "https://bbs.yamibo.com/plugin.php?id=zqlj_sign"
-    r = scraper.get(url)
+    r = SESSION.get(url)
     tree = html.fromstring(r.text)
 
     try:
@@ -55,14 +54,19 @@ def fhash():
         return hash
     except Exception as e:
         print("no form hash")
-        print(r.headers)
+        global msg
+        msg += [{"name": "fhash", "value": e}]
         return ""
 
 
 # 签到
 def check_in():
-    url = "https://bbs.yamibo.com/plugin.php?id=zqlj_sign&sign=" + fhash()
-    r = scraper.get(url)
+    code = fhash()
+    if code == "":
+        return False
+
+    url = "https://bbs.yamibo.com/plugin.php?id=zqlj_sign&sign=" + code
+    r = SESSION.get(url)
     tree = html.fromstring(r.text)
 
     try:
@@ -80,14 +84,14 @@ def check_in():
             return False
         return True
     except Exception as e:
-        msg += [{"name": "签到信息", "value": e}]
+        msg += [{"name": "check_in", "value": e}]
         return False
 
 
 # 查询
 def query_credit():
     # 对象信息
-    r = scraper.get("https://bbs.yamibo.com/plugin.php?id=zqlj_sign")
+    r = SESSION.get("https://bbs.yamibo.com/plugin.php?id=zqlj_sign")
     tree = html.fromstring(r.text)
 
     try:
@@ -99,7 +103,7 @@ def query_credit():
         msg += [{"name": "查询对象失败", "value": e}]
 
     # 积分信息
-    r = scraper.get("https://bbs.yamibo.com/home.php?mod=spacecp&ac=credit")
+    r = SESSION.get("https://bbs.yamibo.com/home.php?mod=spacecp&ac=credit")
     soup = BeautifulSoup(r.text, "lxml")
     tree = html.fromstring(str(soup))
     try:

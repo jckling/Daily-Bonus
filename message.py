@@ -23,24 +23,24 @@ if __name__ == '__main__':
     start_time = time.time()
     utc_time = (datetime.utcnow() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
     content_lst = []
-    if os.environ.get("BILIBILI_COOKIES"):
-        content_lst.append(f"「Bilibili」\n{bilibili_checkin.main()}")
-    if os.environ.get("MUSIC_CELLPHONE"):
-        content_lst.append(f"「网易云音乐」\n{music_checkin.main()}")
+
     if os.environ.get("V2EX_COOKIES"):
         content_lst.append(f"「V2EX」\n{v2ex_checkin.main()}")
+    if os.environ.get("BILIBILI_COOKIES"):
+        content_lst.append(f"「Bilibili」\n{bilibili_checkin.main()}")
     if os.environ.get("YAMIBO_COOKIES"):
         content_lst.append(f"「Yamibo」\n{yamibo_checkin.main()}")
-    if os.environ.get("PICA_EMAIL"):
-        content_lst.append(f"「哔咔漫画」\n{pica_checkin.main()}")
     if os.environ.get("YURIFANS_EMAIL"):
         content_lst.append(f"「Yurifans」\n{yurifans_checkin.main()}")
+    if os.environ.get("PICA_EMAIL"):
+        content_lst.append(f"「哔咔漫画」\n{pica_checkin.main()}")
+
     content_lst.append(
         f"开始时间: {utc_time}\n"
         f"任务用时: {int(time.time() - start_time)} 秒\n"
     )
-
     content = "\n————————————\n\n".join(content_lst)
+
     if TG_BOT_TOKEN:
         bot = Bot(token=TG_BOT_TOKEN)
         bot.sendMessage(
