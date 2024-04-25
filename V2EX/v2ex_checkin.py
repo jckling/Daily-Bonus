@@ -103,6 +103,10 @@ def main():
     for i in range(3):
         try:
             once, success = get_once()
+            if once:
+                check_in(once)
+            if success:
+                query_balance()
         except AttributeError:
             if i < 3:
                 time.sleep(3)
@@ -110,10 +114,7 @@ def main():
             else:
                 raise
         break
-    if once:
-        check_in(once)
-    if success:
-        query_balance()
+
     global msg
     return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
