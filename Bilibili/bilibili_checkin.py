@@ -26,7 +26,7 @@ HEADERS = {
     "Sec-Fetch-Mode": "cors",
     "Sec-Fetch-Dest": "empty",
     "Referer": "https://live.bilibili.com/",
-    "Accept-Encoding": "gzip, deflate, br, zstd",
+    # "Accept-Encoding": "gzip, deflate, br, zstd",
     "Accept-Language": "en,zh-CN;q=0.9,zh;q=0.8,ja;q=0.7,zh-TW;q=0.6",
     "Cookie": COOKIES,
 }

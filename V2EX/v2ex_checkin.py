@@ -18,7 +18,7 @@ msg = []
 
 HEADERS = {
     "Accept": "*/*",
-    "Accept-Encoding": "gzip, deflate, br, zstd",
+    # "Accept-Encoding": "gzip, deflate, br, zstd",
     "Accept-Language": "en,zh-CN;q=0.9,zh;q=0.8,ja;q=0.7,zh-TW;q=0.6",
     "cache-control": "max-age=0",
     "Cookie": COOKIES,
@@ -83,28 +83,26 @@ def query_balance():
     global msg
     checkin_day_str = tree.xpath('//small[@class="gray"]/text()')[0]
     checkin_day = datetime.now().astimezone().strptime(checkin_day_str, '%Y-%m-%d %H:%M:%S %z')
-    print(checkin_day.date(), date.today())
     if checkin_day.date() == date.today():
         # 签到奖励
         bonus = re.search(r'\d+ 的每日登录奖励 \d+ 铜币', r.text)[0]
         msg += [
             {"name": "签到信息", "value": bonus}
         ]
-
-        # 余额
-        balance = tree.xpath('//div[@class="balance_area bigger"]/text()')
-        if len(balance) == 2:
-            balance = ['0'] + balance
-
-        golden, silver, bronze = [s.strip() for s in balance]
-        msg += [
-            {"name": "账户余额", "value": f"{golden} 金币，{silver} 银币，{bronze} 铜币"}
-        ]
     else:
         msg += [
-            {"name": "签到信息", "value": "签到失败"},
-            {"name": "账户余额", "value": "获取失败"}
+            {"name": "签到信息", "value": "签到失败"}
         ]
+
+    # 余额
+    balance = tree.xpath('//div[@class="balance_area bigger"]/text()')
+    if len(balance) == 2:
+        balance = ['0'] + balance
+
+    golden, silver, bronze = [s.strip() for s in balance]
+    msg += [
+        {"name": "账户余额", "value": f"{golden} 金币，{silver} 银币，{bronze} 铜币"}
+    ]
 
 
 def main():

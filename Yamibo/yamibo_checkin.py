@@ -34,7 +34,7 @@ HEADERS = {
     "Sec-Fetch-User": "?1",
     "Sec-Fetch-Dest": "document",
     "Referer": "https://bbs.yamibo.com/plugin.php?id=zqlj_sign",
-    "Accept-Encoding": "gzip, deflate, br, zstd",
+    # "Accept-Encoding": "gzip, deflate, br, zstd",
     "Accept-Language": "en,zh-CN;q=0.9,zh;q=0.8,ja;q=0.7,zh-TW;q=0.6",
     "Cookie": COOKIES,
 }
