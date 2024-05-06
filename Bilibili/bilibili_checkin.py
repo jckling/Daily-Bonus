@@ -57,7 +57,8 @@ def check_in():
     except Exception as e:
         print(r.text)
         msg += [
-            {"name": "check_in", "value": e}
+            {"name": "check_in", "value": e},
+            {"name": "response", "value": r.text}
         ]
 
 
