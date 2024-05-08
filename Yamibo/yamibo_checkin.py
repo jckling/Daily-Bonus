@@ -6,7 +6,6 @@
 import os
 
 import cloudscraper
-import requests
 from bs4 import BeautifulSoup
 from lxml import html
 
@@ -53,9 +52,8 @@ def fhash():
         hash = tree.xpath('//*[@id="scbar_form"]/input[2]')[0].attrib['value']
         return hash
     except Exception as e:
-        print("no form hash")
         global msg
-        msg += [{"name": "fhash", "value": e}]
+        msg += [{"name": "get form fhash error", "value": e}]
         return ""
 
 
@@ -69,9 +67,9 @@ def check_in():
     r = SESSION.get(url)
     tree = html.fromstring(r.text)
 
+    global msg
     try:
         message = tree.xpath('//*[@id="messagetext"]/p[1]/text()')[0]
-        global msg
         if "打卡成功" in message:
             msg += [{"name": "签到信息", "value": "签到成功"}]
         elif "打过卡" in message:
@@ -84,7 +82,7 @@ def check_in():
             return False
         return True
     except Exception as e:
-        msg += [{"name": "check_in", "value": e}]
+        msg += [{"name": "check_in error", "value": e}]
         return False
 
 
@@ -94,10 +92,10 @@ def query_credit():
     r = SESSION.get("https://bbs.yamibo.com/plugin.php?id=zqlj_sign")
     tree = html.fromstring(r.text)
 
+    global msg
     try:
         checkin_msg = tree.xpath('//div[@class="bm signbtn cl"]/a/text()')[0]
         stat = tree.xpath('//*[@id="wp"]/div[2]/div[2]/div[3]/div[2]/ul/li/text()')
-        global msg
         msg += [{"name": s.split("：")[0], "value": s.split("：")[1]} for s in stat]
     except Exception as e:
         msg += [{"name": "查询对象失败", "value": e}]

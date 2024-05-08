@@ -4,7 +4,6 @@
 # @Author   : Jckling
 
 import os
-import uuid
 
 import requests
 
@@ -55,11 +54,7 @@ def check_in():
                 {"name": "签到信息", "value": "签到失败"}
             ]
     except Exception as e:
-        print(r.text)
-        msg += [
-            {"name": "check_in", "value": e},
-            {"name": "response", "value": r.text}
-        ]
+        msg += [{"name": "check_in error", "value": e}]
 
 
 def main():

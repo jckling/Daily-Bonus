@@ -8,8 +8,12 @@ on:
     - cron: '30 23 * * *'
 
 jobs:
-  build:
-    runs-on: self-hosted
+  checkin:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, self-hosted]
+
+    runs-on: ${{ matrix.os }}
 
     env:
       V2EX_COOKIES: ${{ secrets.V2EX_COOKIES }}
@@ -24,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set timezone
         run: sudo timedatectl set-timezone 'Asia/Shanghai'
@@ -33,7 +37,7 @@ jobs:
         run: timedatectl
 
       - name: Set up Python 3.8
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.8'
           architecture: 'x64'

@@ -8,7 +8,6 @@ import time
 from datetime import datetime, timedelta
 
 from Bilibili import bilibili_checkin
-from Music163 import music_checkin
 from Picacomic import pica_checkin
 from V2EX import v2ex_checkin
 from Yamibo import yamibo_checkin
@@ -48,5 +47,5 @@ if __name__ == '__main__':
             text=content,
             parse_mode="HTML"
         )
-    else:
-        print(content)
+
+    print(content)

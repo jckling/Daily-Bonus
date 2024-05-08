@@ -56,9 +56,7 @@ def get_once():
     if match:
         try:
             once = match.group(1)
-            msg += [
-                {"name": "登录信息", "value": "登录成功"}
-            ]
+            msg += [{"name": "登录信息", "value": "登录成功"}]
             return once, True
         except IndexError:
             return "", False
