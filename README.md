@@ -13,7 +13,7 @@
 实现功能
 
 - [x] v2ex （铜币）
-    - 如果使用默认的 Github Action Runner，由于时区不同，签的是昨天
+    - 如果使用默认的 Github Action Runner，由于时区不同，定时任务签的是**昨天**
 - [x] bilibili 直播（辣条）
 - [x] yamibo 论坛（对象）
 - [x] yurifans 论坛（积分）
@@ -33,12 +33,22 @@ Telegram 推送签到结果
 3. 修改 .github/workflows/checkin.yml： 删除 `self-hosted` 并提交
 4. 北京时间每天早上 7:30 定时运行，或仓库 master 分支有提交时触发
 
-| 内容              | 说明                                                      | 备注                                                                                                                                            |
-|-----------------|---------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| secret          | 添加之后可以更新值，但看不到之前设置的值，且不能修改名称                            | ![](screenshots/secrets.png)                                                                                                                  |
-| `self-hosted`   | 将自己的机器注册为 runner                                        | 参照 [Hosting your own runners - GitHub Docs](https://docs.github.com/en/actions/hosting-your-own-runners)<br>![](screenshots/self-hosted.png)  |
-| `ubuntu-latest` | 使用 github 提供的 runner                                    | 参照 [Using GitHub-hosted runners - GitHub Docs](https://docs.github.com/en/actions/using-github-hosted-runners)<br>![](screenshots/ubuntu.png) |
-| 更新              | 打开自己的仓库页面，点击 `Sync fork - Update branch` 即可，注意更新会触发一次签到 | ![](screenshots/update.jpg)                                                                                                                   |
+| 内容              | 说明                                                      | 备注                                                                                                                 |
+|-----------------|---------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| secret          | 添加之后可以更新值，但看不到之前设置的值，且不能修改名称                            | ![](screenshots/secrets.png)                                                                                       |
+| `self-hosted`   | 将自己的机器注册为 runner                                        | 参照 [Hosting your own runners - GitHub Docs](https://docs.github.com/en/actions/hosting-your-own-runners)           |
+| `ubuntu-latest` | 使用 github 提供的 runner                                    | 参照 [Using GitHub-hosted runners - GitHub Docs](https://docs.github.com/en/actions/using-github-hosted-runners)<br> |
+| 更新              | 打开自己的仓库页面，点击 `Sync fork - Update branch` 即可，注意更新会触发一次签到 | ![](screenshots/update.jpg)                                                                                        |
+
+**注意**
+
+1. 300 论坛使用 github runner 签到时会遇到 cloudflare 人机验证
+2. 签到失败可以在 Action 页面尝试 `Re-run`，例如 5.8 已手动完成 v2ex 签到，5.9 定时运行签到昨天显示失败，手动触发重新运行签到成功
+
+| runner          | 定时运行                                      | 手动触发                                    |
+|-----------------|-------------------------------------------|-----------------------------------------|
+| `self-hosted`   | ![](screenshots/self-hosted-schedule.png) | ![](screenshots/self-hosted.png) |
+| `ubuntu-latest` | ![](screenshots/ubuntu-schedule.png)      | ![](screenshots/ubuntu.png)     |
 
 ## 配置
 
