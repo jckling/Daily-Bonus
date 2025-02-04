@@ -78,6 +78,7 @@ def query_credit(b2_token):
 
     headers = {
         "accept": "application/json, text/plain, */*",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
         "authorization": 'Bearer ' + b2_token
     }
     
@@ -105,6 +106,7 @@ def query_credit(b2_token):
 def check_in(b2_token):
     headers = {
         "accept": "application/json, text/plain, */*",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
         "authorization": 'Bearer ' + b2_token
     }
     url = "https://yuri.website/wp-json/b2/v1/userMission"
@@ -120,9 +122,16 @@ def check_in(b2_token):
         msg += [{"name": "签到信息", "value": "签到失败"}]
         return False
     else:
-        data = req.json()["mission"]
-
-    credit = data["credit"]
+        try:
+          data = req.json()["mission"]
+        # 防止查询签到失败但已签到导致无法get到json数据
+        except Exception as e:
+          data = req.text
+          msg += [
+              {"name": "签到信息", "value": "今日已签到"},
+              {"name": "今日获取积分", "value": data[1:-1]}
+          ]
+          return True
     msg += [
         {"name": "签到信息", "value": "签到成功"},
         {"name": "今日获取积分", "value": credit},
@@ -133,6 +142,7 @@ def logout(b2_token):
     url = "https://yuri.website/wp-json/b2/v1/loginOut"
     headers = {
         "accept": "application/json, text/plain, */*",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
         "authorization": 'Bearer ' + b2_token
     }
     req = SESSION.get(url, headers=headers)
