@@ -5,14 +5,13 @@ on:
     branches:
       - master
   schedule:
-    - cron: '30 23 * * *'
+    - cron: '50 23 * * *'
 
 jobs:
   checkin:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        # os: [ubuntu-latest, self-hosted]
 
     runs-on: ${{ matrix.os }}
 
