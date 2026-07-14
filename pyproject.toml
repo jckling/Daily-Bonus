@@ -7,5 +7,5 @@ requires-python = ">=3.13"
 dependencies = [
     "lxml>=6.0.2",
     "requests>=2.32.5",
-    "telegram>=0.0.1",
+    "python-telegram-bot>=22.0",
 ]
