@@ -33,20 +33,23 @@ HEADERS = {
 
 
 def get_sign_page():
-    """Fetch sign page, return (sign_hash, already_signed) or (None, None) if not logged in."""
+    """Fetch sign page.
+
+    Returns (sign_hash, already_signed, page_text) or (None, None, None) if not logged in.
+    """
     url = f"{BASE_URL}/plugin.php?id=zqlj_sign"
     r = SESSION.get(url, headers=HEADERS)
 
     global msg
     if "需要先登录" in r.text:
         msg.append({"name": "登录信息", "value": "登录失败，Cookie 可能已经失效"})
-        return None, None
+        return None, None, None
 
     sign_match = re.search(r'sign=([a-f0-9]+)', r.text)
     sign_hash = sign_match.group(1) if sign_match else None
     already_signed = "今日已打卡" in r.text
 
-    return sign_hash, already_signed
+    return sign_hash, already_signed, r.text
 
 
 def check_in(sign_hash):
@@ -71,18 +74,20 @@ def check_in(sign_hash):
         return False
 
 
-def query_stats():
-    """Query sign stats from sign page and credit info from credit page."""
+def query_stats(page_text):
+    """Query sign stats from sign page HTML and credit info from credit page."""
     global msg
 
-    # Sign stats from sign page
-    url = f"{BASE_URL}/plugin.php?id=zqlj_sign"
-    r = SESSION.get(url, headers=HEADERS)
-
-    for kw in ["本月打卡", "连续打卡", "累计打卡", "最近奖励"]:
-        match = re.search(rf'{kw}：([^<]+)', r.text)
+    # Sign stats from the already-fetched sign page
+    stats_map = {
+        "本月打卡": "本月签到",
+        "连续打卡": "连续签到",
+        "累计打卡": "累计签到",
+        "最近奖励": "最近奖励",
+    }
+    for kw, name in stats_map.items():
+        match = re.search(rf'{kw}：([^<]+)', page_text)
         if match:
-            name = {"本月打卡": "本月签到", "连续打卡": "连续签到", "累计打卡": "累计签到", "最近奖励": "最近奖励"}[kw]
             msg.append({"name": name, "value": match.group(1)})
 
     # Credit info from credit page
@@ -112,7 +117,7 @@ def main():
     if not COOKIES:
         return "No YAMIBO_COOKIES set"
 
-    sign_hash, already_signed = get_sign_page()
+    sign_hash, already_signed, page_text = get_sign_page()
     if sign_hash is None and already_signed is None:
         return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
@@ -121,7 +126,7 @@ def main():
     else:
         msg.append({"name": "签到信息", "value": "今日已签到，无需重复签到"})
 
-    query_stats()
+    query_stats(page_text)
 
     return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
