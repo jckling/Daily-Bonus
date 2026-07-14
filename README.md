@@ -60,33 +60,25 @@ Telegram 推送签到结果
 | TG_BOT_TOKEN | bot token   | [How Do I Create a Bot?](https://core.telegram.org/bots#how-do-i-create-a-bot)                                                                                                                              |
 | TG_USER_ID   | user id     | [How can I send a message to someone with my telegram bot using their Username](https://stackoverflow.com/questions/41664810/how-can-i-send-a-message-to-someone-with-my-telegram-bot-using-their-username) |
 
-### V2EX
-
-V2EX 论坛使用 Cookie 登录，只需 `A2` 一个 Cookie
-
-| Name         | Description |
-|--------------|-------------|
-| V2EX_COOKIES | Cookie      |
-
-### Bilibili
-
-bilibili 直播使用 Cookie 登录
-
-| Name             | Description |
-|------------------|-------------|
-| BILIBILI_COOKIES | Cookie      |
-
 ### Uma
 
-赛马娘每日签到网页使用 Cookie 登录，需要从浏览器复制 `site`、`joy_jct`、`DedeUserID`、`SESSDATA` 四个 Cookie
+赛马娘每日签到网页使用 Cookie 登录，需要 `site`、`joy_jct`、`DedeUserID`、`SESSDATA` 四个 Cookie
 
 | Name        | Description |
 |-------------|-------------|
 | UMA_COOKIES | Cookie      |
 
+### V2EX
+
+V2EX 论坛使用 Cookie 登录，需要 `A2` 一个 Cookie
+
+| Name         | Description |
+|--------------|-------------|
+| V2EX_COOKIES | Cookie      |
+
 ### Yamibo
 
-300 论坛使用 Cookie 登录
+300 论坛使用 Cookie 登录，需要 `EeqY_2132_auth` 和 `EeqY_2132_saltkey` 两个 Cookie
 
 | Name           | Description |
 |----------------|-------------|
@@ -100,6 +92,14 @@ Yurifans 使用邮箱和密码登录
 |-------------------|-------------|
 | YURIFANS_EMAIL    | 邮箱          |
 | YURIFANS_PASSWORD | 密码          |
+
+### Bilibili
+
+bilibili 直播使用 Cookie 登录
+
+| Name             | Description |
+|------------------|-------------|
+| BILIBILI_COOKIES | Cookie      |
 
 ### FFXIV【修复中】
 
