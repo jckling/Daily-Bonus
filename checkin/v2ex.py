@@ -21,7 +21,7 @@ HEADERS = {
     "accept-language": "en-US,en;q=0.9,zh-TW;q=0.8,zh;q=0.7",
     "cookie": COOKIES or "",
     "referer": "https://www.v2ex.com/",
-    "sec-ch-ua": '"Not;A=Brand";v="8", "Chromium";v="150", "Google Chrome";v="150"',
+    "sec-ch-ua": '"Not;A-Brand";v="8", "Chromium";v="150", "Google Chrome";v="150"',
     "sec-ch-ua-mobile": "?0",
     "sec-ch-ua-platform": '"macOS"',
     "sec-fetch-dest": "document",
@@ -36,10 +36,10 @@ HEADERS = {
 def get_once():
     """Check daily mission page for login status and once token.
 
-    Returns (once, already_claimed):
-      - ("", False) if not logged in
-      - ("", True) if already claimed today
-      - (once_token, False) if ready to claim
+    Returns (once, already_claimed, streak_text):
+      - ("", False, "") if not logged in
+      - ("", True, streak_text) if already claimed today
+      - (once_token, False, "") if ready to claim
     """
     url = f"{BASE_URL}/mission/daily"
     r = SESSION.get(url, headers=HEADERS)
@@ -47,21 +47,22 @@ def get_once():
     global msg
     if "你要查看的页面需要先登录" in r.text:
         msg.append({"name": "登录信息", "value": "登录失败，Cookie 可能已经失效"})
-        return "", False
+        return "", False, ""
 
     if "每日登录奖励已领取" in r.text:
-        streak = re.search(r"已连续登录 \d+ 天", r.text)
-        streak_text = streak.group(0) if streak else "已连续登录 ? 天"
-        msg.append({"name": "登录信息", "value": f"每日登录奖励已领取，{streak_text}"})
-        return "", True
+        streak = re.search(r"已连续登录 (\d+) 天", r.text)
+        streak_days = streak.group(1) if streak else "?"
+        msg.append({"name": "登录信息", "value": "每日登录奖励已领取"})
+        msg.append({"name": "累计登录", "value": f"{streak_days} 天"})
+        return "", True, ""
 
     match = re.search(r"once=(\d+)", r.text)
     if match:
         msg.append({"name": "登录信息", "value": "登录成功"})
-        return match.group(1), False
+        return match.group(1), False, ""
 
     msg.append({"name": "登录信息", "value": "无法获取 once 参数，页面结构可能已变更"})
-    return "", False
+    return "", False, ""
 
 
 def check_in(once):
@@ -87,18 +88,24 @@ def check_in(once):
 
 
 def query_balance():
-    """Query account balance from /balance page."""
+    """Query account balance and today's reward from /balance page."""
     url = f"{BASE_URL}/balance"
     r = SESSION.get(url, headers=HEADERS)
     tree = html.fromstring(r.content)
 
     global msg
+
+    # Today's reward from transaction history
+    reward_match = re.search(r"(\d{8}) 的每日登录奖励 (\d+) 铜币", r.text)
+    if reward_match:
+        msg.append({"name": "今日奖励", "value": f"{reward_match.group(2)} 铜币"})
+
+    # Account balance
     balance_nodes = tree.xpath('//div[@class="balance_area bigger"]/text()')
     if not balance_nodes:
         msg.append({"name": "账户余额", "value": "查询余额失败"})
         return
 
-    # balance_area has [golden, silver, bronze] or [silver, bronze] (no golden)
     values = [s.strip() for s in balance_nodes if s.strip()]
     if len(values) == 2:
         values = ["0"] + values
@@ -112,11 +119,11 @@ def main():
     if not COOKIES:
         return "No V2EX_COOKIES set"
 
-    once, _ = get_once()
+    once, _, _ = get_once()
     if once:
         check_in(once)
 
-    # Always query balance for current state
+    # Always query balance for current state and today's reward
     query_balance()
 
     return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
