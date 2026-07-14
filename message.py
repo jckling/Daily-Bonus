@@ -31,7 +31,7 @@ if __name__ == '__main__':
     if os.environ.get("PICA_EMAIL"):
         content_lst.append(f"「哔咔漫画」\n{pica.main()}")
     if os.environ.get("UMA_COOKIES"):
-        content_lst.append(f"「Uma」\n{uma.main()}")
+        content_lst.append(f"「賽馬娘每日簽到」\n{uma.main()}")
 
     content_lst.append(
         f"开始时间: {utc_time}\n"
