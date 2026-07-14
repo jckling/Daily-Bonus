@@ -17,6 +17,7 @@
 - [x] bilibili 直播（辣条）
 - [x] yamibo 论坛（对象）
 - [x] yurifans 论坛（积分）
+- [x] uma 赛马娘每日签到（游戏内道具 + 积分）
 - [x] telegram-bot 推送
 - [ ] ff14 （积分）【修复中】
 - [ ] 哔咔漫画打卡（哔咔）【未验证】
@@ -61,7 +62,7 @@ Telegram 推送签到结果
 
 ### V2EX
 
-V2EX 论坛使用 Cookie 登录
+V2EX 论坛使用 Cookie 登录，只需 `A2` 一个 Cookie
 
 | Name         | Description |
 |--------------|-------------|
@@ -74,6 +75,14 @@ bilibili 直播使用 Cookie 登录
 | Name             | Description |
 |------------------|-------------|
 | BILIBILI_COOKIES | Cookie      |
+
+### Uma
+
+赛马娘每日签到网页使用 Cookie 登录，需要从浏览器复制 `site`、`joy_jct`、`DedeUserID`、`SESSDATA` 四个 Cookie
+
+| Name        | Description |
+|-------------|-------------|
+| UMA_COOKIES | Cookie      |
 
 ### Yamibo
 
@@ -121,8 +130,8 @@ FF14 积分商城使用账号和密码登录
 
 开发工具
 
-- Fiddler 4
-- Python 3.8.5
+- Chrome DevTools / HAR
+- Python 3.13
 - GitHub Actions
 
 参阅
