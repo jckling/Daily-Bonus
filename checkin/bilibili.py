@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# @File     : bilibili_checkin.py
+# @File     : bilibili.py
 # @Time     : 2021/04/07 15:10
 # @Author   : Jckling
 

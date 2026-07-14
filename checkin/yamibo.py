@@ -1,37 +1,34 @@
 # -*- coding: utf-8 -*-
-# @File     : yamibo_checkin.py
+# @File     : yamibo.py
 # @Time     : 2021/04/07 15:48
 # @Author   : Jckling
 
 import os
 
-import cloudscraper
+import requests
+from playwright.sync_api import sync_playwright
+from playwright_stealth import Stealth
+
 from bs4 import BeautifulSoup
 from lxml import html
 
 # cookies
-COOKIES = os.environ.get("YAMIBO_COOKIES")
+COOKIES = os.environ.get("YAMIBO_COOKIES") or 'EeqY_2132_newemail=689055%091335176598%40qq.com%091750428435; EeqY_2132_nofavfid=1; EeqY_2132_smile=4D1; EeqY_2132_saltkey=eU8I8vZ0; EeqY_2132_lastvisit=1772084200; acw_tc=af0c62a917732990851864817e7b150e59eefc65cc5e3a91856c4f90cd; cdn_sec_tc=af0c62a917732990851864817e7b150e59eefc65cc5e3a91856c4f90cd; EeqY_2132_ulastactivity=4ded%2BZWgwmeHAefFCCJAKniJSpdYh33wrjZXV3nGy3mKzujv25iF; EeqY_2132_auth=2643Zuf%2F1N%2FsuUX%2BuwZjSzx1iP1Mtk%2FjB7bV0h30uMNqct%2FCEVRoU%2BFF6WwT2aUwqZQhAx75hXcHxzvn8%2Bh6xQWFI3s; EeqY_2132_lastcheckfeed=243370%7C1773299081; EeqY_2132_member_login_status=1; EeqY_2132_visitedfid=30; EeqY_2132_sid=kmLo8q; EeqY_2132_lip=175.12.98.169%2C1773299081; EeqY_2132_st_t=243370%7C1773302406%7C21476c826de848db92e43f6d8f39524b; EeqY_2132_forum_lastvisit=D_30_1773302406; EeqY_2132_checkpm=1; EeqY_2132_lastact=1773302407%09home.php%09misc; EeqY_2132_sendmail=1'
 msg = []
 
 HEADERS = {
     "Host": "bbs.yamibo.com",
     "Connection": "keep-alive",
-    "sec-ch-ua": '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-full-version": "123.0.6312.106",
-    "sec-ch-ua-arch": "x86",
-    "sec-ch-ua-platform": "Windows",
-    "sec-ch-ua-platform-version": "15.0.0",
-    "sec-ch-ua-model": '""',
-    "sec-ch-ua-bitness": "64",
-    "sec-ch-ua-full-version-list": '"Google Chrome";v="123.0.6312.106", "Not:A-Brand";v="8.0.0.0", "Chromium";v="123.0.6312.106"',
+    # "sec-ch-ua": '"Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145"',
+    # "sec-ch-ua-mobile": "?0",
+    # "sec-ch-ua-platform": "macOS",
     "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-    "Sec-Fetch-Site": "same-origin",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-User": "?1",
-    "Sec-Fetch-Dest": "document",
+    # "Sec-Fetch-Site": "none",
+    # "Sec-Fetch-Mode": "navigate",
+    # "Sec-Fetch-User": "?1",
+    # "Sec-Fetch-Dest": "document",
     "Referer": "https://bbs.yamibo.com/plugin.php?id=zqlj_sign",
     # "Accept-Encoding": "gzip, deflate, br, zstd",
     "Accept-Language": "en,zh-CN;q=0.9,zh;q=0.8,ja;q=0.7,zh-TW;q=0.6",
@@ -39,22 +36,37 @@ HEADERS = {
 }
 
 # Bypass Cloudflare
-SESSION = cloudscraper.create_scraper()
-
+SESSION = requests.Session()
 
 # 登录
 def fhash():
-    url = "https://bbs.yamibo.com/plugin.php?id=zqlj_sign"
-    r = SESSION.get(url)
-    tree = html.fromstring(r.text)
+    with Stealth().use_sync(sync_playwright()) as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
 
-    try:
-        hash = tree.xpath('//*[@id="scbar_form"]/input[2]')[0].attrib['value']
-        return hash
-    except Exception as e:
-        global msg
-        msg += [{"name": "get form fhash error", "value": e}]
-        return ""
+        page.goto("https://bbs.yamibo.com/plugin.php?id=zqlj_sign")
+        page.wait_for_load_state("networkidle")
+        
+        # Check if we got in
+        if "Just a moment" in page.title():
+            print("Still blocked by Cloudflare")
+        else:
+            print("Success! Page content:")
+            print(page.content())
+            
+        browser.close()
+    return ""
+        
+
+    # tree = html.fromstring(r.text)
+
+    # try:
+    #     hash = tree.xpath('//*[@id="scbar_form"]/input[2]')[0].attrib['value']
+    #     return hash
+    # except Exception as e:
+    #     global msg
+    #     msg += [{"name": "get form fhash error", "value": e}]
+    #     return ""
 
 
 # 签到

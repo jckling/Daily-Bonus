@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# @File     : yurifans_checkin.py
+# @File     : yurifans.py
 # @Time     : 2023/04/25 12:17
 # @Author   : Cloudac7
 

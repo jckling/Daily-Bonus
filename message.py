@@ -5,13 +5,9 @@
 
 import os
 import time
-from datetime import datetime, timedelta
 
-from Bilibili import bilibili_checkin
-from Picacomic import pica_checkin
-from V2EX import v2ex_checkin
-from Yamibo import yamibo_checkin
-from Yurifans import yurifans_checkin
+from datetime import datetime, timedelta
+from checkin import bilibili, pica, uma, v2ex, yamibo, yurifans
 from telegram import Bot
 
 # info
@@ -24,15 +20,17 @@ if __name__ == '__main__':
     content_lst = []
 
     if os.environ.get("V2EX_COOKIES"):
-        content_lst.append(f"「V2EX」\n{v2ex_checkin.main()}")
+        content_lst.append(f"「V2EX」\n{v2ex.main()}")
     if os.environ.get("BILIBILI_COOKIES"):
-        content_lst.append(f"「Bilibili」\n{bilibili_checkin.main()}")
+        content_lst.append(f"「Bilibili」\n{bilibili.main()}")
     if os.environ.get("YAMIBO_COOKIES"):
-        content_lst.append(f"「Yamibo」\n{yamibo_checkin.main()}")
+        content_lst.append(f"「Yamibo」\n{yamibo.main()}")
     if os.environ.get("YURIFANS_EMAIL"):
-        content_lst.append(f"「Yurifans」\n{yurifans_checkin.main()}")
+        content_lst.append(f"「Yurifans」\n{yurifans.main()}")
     if os.environ.get("PICA_EMAIL"):
-        content_lst.append(f"「哔咔漫画」\n{pica_checkin.main()}")
+        content_lst.append(f"「哔咔漫画」\n{pica.main()}")
+    if os.environ.get("UMA_COOKIES"):
+        content_lst.append(f"「Uma」\n{uma.main()}")
 
     content_lst.append(
         f"开始时间: {utc_time}\n"
