@@ -63,8 +63,8 @@ def check_in(sign_hash):
         reward = match.group(0) if match else "签到成功"
         msg.append({"name": "签到信息", "value": f"签到成功，{reward}"})
         return True
-    elif "打过卡" in r.text or "已打卡" in r.text:
-        msg.append({"name": "签到信息", "value": "今日已签到，无需重复签到"})
+    elif "打过卡" in r.text:
+        msg.append({"name": "签到信息", "value": "今日已签到"})
         return True
     elif "需要先登录" in r.text:
         msg.append({"name": "签到信息", "value": "登录失败，Cookie 可能已经失效"})
