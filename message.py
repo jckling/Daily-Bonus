@@ -3,10 +3,11 @@
 # @Time     : 2021/10/17 19:24
 # @Author   : Jckling
 
+import asyncio
 import os
 import time
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from checkin import bilibili, pica, uma, v2ex, yamibo, yurifans
 from telegram import Bot
 
@@ -16,7 +17,7 @@ TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN")
 
 if __name__ == '__main__':
     start_time = time.time()
-    utc_time = (datetime.utcnow() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
+    utc_time = (datetime.now(timezone.utc) + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
     content_lst = []
 
     if os.environ.get("V2EX_COOKIES"):
@@ -40,10 +41,10 @@ if __name__ == '__main__':
 
     if TG_BOT_TOKEN:
         bot = Bot(token=TG_BOT_TOKEN)
-        bot.sendMessage(
+        asyncio.run(bot.send_message(
             chat_id=TG_USER_ID,
             text=content,
             parse_mode="HTML"
-        )
+        ))
 
     print(content)
