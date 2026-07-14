@@ -1,6 +1,12 @@
+# IDE
 **/.idea
+
+# Python
+**/__pycache__
 **/Lib
 **/Scripts
-**/__pycache__
-desktop.ini
 pyvenv.cfg
+
+# Other
+desktop.ini
+*.har
