@@ -9,4 +9,5 @@ pyvenv.cfg
 
 # Other
 desktop.ini
+.DS_Store
 *.har

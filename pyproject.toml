@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "curl_cffi>=0.7",
     "lxml>=6.0.2",
     "requests>=2.32.5",
     "python-telegram-bot>=22.0",

@@ -3,168 +3,162 @@
 # @Time     : 2023/04/25 12:17
 # @Author   : Cloudac7
 
-# %%
 import os
-import requests
-from time import sleep
+import time
 
-# session
-SESSION = requests.session()
+from curl_cffi import requests as cffi_requests
 
 # info
-USERNAME = os.environ.get('YURIFANS_EMAIL')
-PASSWORD = os.environ.get('YURIFANS_PASSWORD')
-
-# message
+USERNAME = os.environ.get("YURIFANS_EMAIL")
+PASSWORD = os.environ.get("YURIFANS_PASSWORD")
 msg = []
 
-# 登录
+BASE_URL = "https://yuri.website"
+
+HEADERS = {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,zh-TW;q=0.8,zh;q=0.7",
+    "content-type": "application/x-www-form-urlencoded",
+    "origin": BASE_URL,
+    "referer": f"{BASE_URL}/",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36",
+}
+
+
 def login():
-    url = "https://yuri.website/wp-json/jwt-auth/v1/token"
-    headers = {
-        "accept": "application/json, text/plain, */*",
-        "referer": "https://yuri.website/",
-        "content-type": "application/x-www-form-urlencoded",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"
-    }
-    form_data = {
-        "username": USERNAME,
-        "password": PASSWORD,
+    """Login with email and password, return b2_token or None."""
+    url = f"{BASE_URL}/wp-json/jwt-auth/v1/token"
+    r = cffi_requests.post(
+        url,
+        headers=HEADERS,
+        data={"username": USERNAME, "password": PASSWORD},
+        impersonate="chrome",
+    )
+    if r.status_code != 200:
+        msg.append({"name": "登录信息", "value": "登录失败，请检查账号密码"})
+        return None
+
+    b2_token = r.cookies.get("b2_token")
+    if not b2_token:
+        msg.append({"name": "登录信息", "value": "登录失败，未获取到 token"})
+        return None
+
+    data = r.json()
+    name = data.get("name", "")
+    masked = "█" * len(name)
+    msg.append({"name": "登录信息", "value": masked})
+    return b2_token
+
+
+def get_auth_headers(b2_token):
+    """Build headers with Bearer token for authenticated requests."""
+    return {
+        **HEADERS,
+        "cookie": f"b2_token={b2_token}",
+        "authorization": f"Bearer {b2_token}",
     }
 
-    try:
-        req = SESSION.post(
-            url, 
-            headers=headers,
-            data=form_data
-        )
-        b2_token = req.cookies.get("b2_token")
-        return b2_token
-    except Exception as e:
-        print("登录失败, 请检查账号密码是否正确")
-        return ""
 
-# 获取用户信息
-def check_user_info(b2_token):
-    url = "https://yuri.website/wp-json/b2/v1/getUserInfo"
-    headers = {
-        "accept": "application/json, text/plain, */*",
-        "authorization": f'Bearer {b2_token}',
-        "content-type": "application/x-www-form-urlencoded",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"
-    }
-    req = SESSION.post(url, headers=headers)
-    if req.status_code != 200:
-        print('获取用户信息失败')
+def get_user_info(b2_token):
+    """Get user info to verify login."""
+    headers = get_auth_headers(b2_token)
+    r = cffi_requests.post(
+        f"{BASE_URL}/wp-json/b2/v1/getUserInfo",
+        headers=headers,
+        data="ref=null",
+        impersonate="chrome",
+    )
+    if r.status_code != 200:
         return False
-    else:
-        try:
-            user_data = req.json()["user_data"]
-        except Exception as e:
-            print('获取用户信息失败')
-            print(req.json())
-            return False
-    
-    global msg
-    msg += [
-        {"name": "账户信息", "value": user_data.get("name")},
-    ]
     return True
-    
 
-# 查询
-def query_credit(b2_token):
-    url = "https://yuri.website/wp-json/b2/v1/getUserMission"
 
-    headers = {
-        "accept": "application/json, text/plain, */*",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
-        "authorization": 'Bearer ' + b2_token
-    }
-    
-    global msg
+def get_mission(b2_token):
+    """Get mission status. Returns (already_signed, credit, my_credit)."""
+    headers = get_auth_headers(b2_token)
+    r = cffi_requests.post(
+        f"{BASE_URL}/wp-json/b2/v1/getUserMission",
+        headers=headers,
+        data="count=6&paged=1",
+        impersonate="chrome",
+    )
+    if r.status_code != 200:
+        msg.append({"name": "签到信息", "value": "查询签到状态失败"})
+        return None
 
-    req = SESSION.post(url, headers=headers)
-    
-    if req.status_code != 200:
-        return True
-    
-    mission = req.json().get("mission")
-    date = mission.get("date")
+    mission = r.json().get("mission", {})
+    date = mission.get("date", "")
+    credit = mission.get("credit", 0)
     my_credit = mission.get("my_credit", 0)
-    msg += [{"name": "当前积分", "value": my_credit}]
-    if date == "":
+
+    if date:
+        # Already signed today
+        msg.append({"name": "签到信息", "value": f"今日已签到（{date}）"})
+        msg.append({"name": "今日奖励", "value": f"{credit} 积分"})
+        msg.append({"name": "当前积分", "value": str(my_credit)})
         return True
     else:
-        credit = mission.get("credit", 0) 
-        msg += [{"name": "签到信息", "value": "今日已经签到"}]
-        msg += [{"name": "今日获取积分", "value": credit}]
         return False
 
 
-# 签到
 def check_in(b2_token):
-    headers = {
-        "accept": "application/json, text/plain, */*",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
-        "authorization": 'Bearer ' + b2_token
-    }
-    url = "https://yuri.website/wp-json/b2/v1/userMission"
-
-    req = SESSION.post(
-        url, 
-        headers=headers
+    """Perform daily check-in."""
+    headers = get_auth_headers(b2_token)
+    r = cffi_requests.post(
+        f"{BASE_URL}/wp-json/b2/v1/userMission",
+        headers=headers,
+        impersonate="chrome",
     )
 
-    global msg
-    
-    if req.status_code != 200:
-        msg += [{"name": "签到信息", "value": "签到失败"}]
+    if r.status_code != 200:
+        msg.append({"name": "签到信息", "value": "签到失败"})
         return False
-    else:
-        try:
-          data = req.json()["mission"]
-        # 防止查询签到失败但已签到导致无法get到json数据
-        except Exception as e:
-          data = req.text
-          msg += [
-              {"name": "签到信息", "value": "今日已签到"},
-              {"name": "今日获取积分", "value": data[1:-1]}
-          ]
-          return True
-    msg += [
-        {"name": "签到信息", "value": "签到成功"},
-        {"name": "今日获取积分", "value": credit},
-    ]
+
+    # Response is either a credit number string or JSON with mission data
+    try:
+        data = r.json()
+        if isinstance(data, dict) and "mission" in data:
+            mission = data["mission"]
+            date = mission.get("date", "")
+            credit = mission.get("credit", 0)
+            my_credit = mission.get("my_credit", 0)
+            msg.append({"name": "签到信息", "value": f"签到成功（{date}）"})
+            msg.append({"name": "今日奖励", "value": f"{credit} 积分"})
+            msg.append({"name": "当前积分", "value": str(my_credit)})
+        else:
+            # Sometimes returns just the credit as a string
+            msg.append({"name": "签到信息", "value": "签到成功"})
+            msg.append({"name": "今日奖励", "value": f"{data} 积分"})
+    except Exception:
+        msg.append({"name": "签到信息", "value": f"签到成功（{r.text}）"})
+
     return True
 
-def logout(b2_token):
-    url = "https://yuri.website/wp-json/b2/v1/loginOut"
-    headers = {
-        "accept": "application/json, text/plain, */*",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
-        "authorization": 'Bearer ' + b2_token
-    }
-    req = SESSION.get(url, headers=headers)
-    if req.status_code != 200:
-        print("退出登录失败")
-    else:
-        print("退出登录成功")
 
-# %%
 def main():
-    b2_token = login()
-    sleep(2)
-    if b2_token != "":
-        if check_user_info(b2_token):
-            if query_credit(b2_token):
-                check_in(b2_token)
-        logout(b2_token)
     global msg
+    if not USERNAME or not PASSWORD:
+        return "No YURIFANS_EMAIL or YURIFANS_PASSWORD set"
+
+    b2_token = login()
+    if not b2_token:
+        return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
+
+    if not get_user_info(b2_token):
+        msg.append({"name": "登录信息", "value": "登录失败，token 验证失败"})
+        return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
+
+    already_signed = get_mission(b2_token)
+    if already_signed is None:
+        return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
+
+    if not already_signed:
+        check_in(b2_token)
+
     return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(" Yurifans 签到开始 ".center(60, "="))
     print(main())
     print(" Yurifans 签到结束 ".center(60, "="), "\n")

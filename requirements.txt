@@ -4,11 +4,16 @@ anyio==4.14.2
     # via httpx
 certifi==2026.6.17
     # via
+    #   curl-cffi
     #   httpcore
     #   httpx
     #   requests
+cffi==2.1.0
+    # via curl-cffi
 charset-normalizer==3.4.9
     # via requests
+curl-cffi==0.15.0
+    # via daily-bonus (pyproject.toml)
 h11==0.16.0
     # via httpcore
 httpcore==1.0.9
@@ -22,9 +27,19 @@ idna==3.18
     #   requests
 lxml==6.1.1
     # via daily-bonus (pyproject.toml)
+markdown-it-py==4.2.0
+    # via rich
+mdurl==0.1.2
+    # via markdown-it-py
+pycparser==3.0
+    # via cffi
+pygments==2.20.0
+    # via rich
 python-telegram-bot==22.8
     # via daily-bonus (pyproject.toml)
 requests==2.34.2
     # via daily-bonus (pyproject.toml)
+rich==15.0.0
+    # via curl-cffi
 urllib3==2.7.0
     # via requests
