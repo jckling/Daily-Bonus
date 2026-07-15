@@ -50,6 +50,12 @@ def get_sign_page():
     # Use button text to determine sign-in status: "点击打卡" = not signed, "今日已打卡" button = signed
     btn_match = re.search(r'class="btna"[^>]*>([^<]+)<', r.text)
     btn_text = btn_match.group(1).strip() if btn_match else ""
+
+    # If button not found, the page may be blocked by WAF
+    if not btn_text and "我的打卡动态" not in r.text:
+        msg.append({"name": "签到信息", "value": "页面被拦截，无法获取签到状态"})
+        return None, None, None
+
     already_signed = "今日已打卡" in btn_text and "点击打卡" not in btn_text
 
     return sign_hash, already_signed, r.text
