@@ -20,18 +20,18 @@ if __name__ == '__main__':
     utc_time = (datetime.now(timezone.utc) + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
     content_lst = []
 
+    if os.environ.get("UMA_COOKIES"):
+        content_lst.append(f"「賽馬娘每日簽到」\n{uma.main()}")
+    if os.environ.get("YAMIBO_COOKIES"):
+        content_lst.append(f"「Yamibo」\n{yamibo.main()}")
+    if os.environ.get("YURIFANS_EMAIL") and os.environ.get("YURIFANS_PASSWORD"):
+        content_lst.append(f"「Yurifans」\n{yurifans.main()}")
     if os.environ.get("V2EX_COOKIES"):
         content_lst.append(f"「V2EX」\n{v2ex.main()}")
     if os.environ.get("BILIBILI_COOKIES"):
         content_lst.append(f"「Bilibili」\n{bilibili.main()}")
-    if os.environ.get("YAMIBO_COOKIES"):
-        content_lst.append(f"「Yamibo」\n{yamibo.main()}")
-    if os.environ.get("YURIFANS_EMAIL"):
-        content_lst.append(f"「Yurifans」\n{yurifans.main()}")
-    if os.environ.get("PICA_EMAIL"):
+    if os.environ.get("PICA_USERNAME") and os.environ.get("PICA_PASSWORD"):
         content_lst.append(f"「哔咔漫画」\n{pica.main()}")
-    if os.environ.get("UMA_COOKIES"):
-        content_lst.append(f"「賽馬娘每日簽到」\n{uma.main()}")
 
     content_lst.append(
         f"开始时间: {utc_time}\n"
