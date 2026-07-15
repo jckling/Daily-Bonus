@@ -140,8 +140,12 @@ def get_config():
     return None
 
 
-def get_today_reward():
+def get_today_reward(sign_count=None):
     """Get today's reward info from config.
+
+    Uses sign_count (monthly sign-in count) as the key to look up rewards
+    from the config's daily_sign_prize_list. If sign_count is not provided,
+    falls back to the day of month.
 
     Returns (daily_reward_str, milestone_reward_str) or (None, None) if config unavailable.
     """
@@ -149,11 +153,11 @@ def get_today_reward():
     if not config:
         return None, None
 
-    today_day = str(datetime.now().day)
+    today_key = str(sign_count) if sign_count else str(datetime.now().day)
     daily_list = config.get("daily_sign_prize_list", {})
     total_list = config.get("total_sign_prize_list", {})
 
-    daily = daily_list.get(today_day, {})
+    daily = daily_list.get(today_key, {})
     daily_str = None
     if daily:
         name = daily.get("prize_name", "").strip()
@@ -161,7 +165,7 @@ def get_today_reward():
         point = daily.get("add_point", 0)
         daily_str = f"{name} x{num} + {point} 积分"
 
-    milestone = total_list.get(today_day, {})
+    milestone = total_list.get(today_key, {})
     milestone_str = None
     if milestone:
         point = milestone.get("add_point", 0)
@@ -210,7 +214,8 @@ def main():
     status = get_status()
     if status == 1:
         msg.append({"name": "签到信息", "value": "今日已签到"})
-        daily, milestone = get_today_reward()
+        total = get_record()
+        daily, milestone = get_today_reward(total)
         if daily:
             msg.append({"name": "今日奖励", "value": daily})
         if milestone:
@@ -219,7 +224,8 @@ def main():
         result = check_in()
         if result.get("code") == 0:
             msg.append({"name": "签到信息", "value": "签到成功"})
-            daily, milestone = get_today_reward()
+            total = get_record()
+            daily, milestone = get_today_reward(total)
             if daily:
                 msg.append({"name": "今日奖励", "value": daily})
             if milestone:
@@ -229,9 +235,12 @@ def main():
     else:
         msg.append({"name": "签到信息", "value": "查询签到状态失败，Cookie 可能已失效"})
 
-    # Query monthly record
-    total = get_record()
-    if total > 0:
+    # Query monthly record (if not already fetched)
+    if "本月签到" not in [m["name"] for m in msg]:
+        total = get_record()
+        if total > 0:
+            msg.append({"name": "本月签到", "value": f"已签到 {total} 天"})
+    elif total > 0:
         msg.append({"name": "本月签到", "value": f"已签到 {total} 天"})
 
     # Query point balance
