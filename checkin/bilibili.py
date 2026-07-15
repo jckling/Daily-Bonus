@@ -4,6 +4,7 @@
 # @Author   : Jckling
 
 import os
+import time
 
 import requests
 
@@ -12,59 +13,99 @@ COOKIES = os.environ.get("BILIBILI_COOKIES")
 SESSION = requests.Session()
 msg = []
 
+BASE_URL = "https://api.bilibili.com"
+
 HEADERS = {
-    "Host": "api.live.bilibili.com",
-    "Connection": "keep-alive",
-    "sec-ch-ua": '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
-    "Accept": "application/json, text/plain, */*",
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,zh-TW;q=0.8,zh;q=0.7",
+    "cookie": COOKIES or "",
+    "origin": "https://www.bilibili.com",
+    "referer": "https://www.bilibili.com/",
+    "sec-ch-ua": '"Not;A-Brand";v="8", "Chromium";v="150", "Google Chrome";v="150"',
     "sec-ch-ua-mobile": "?0",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-    "sec-ch-ua-platform": "Windows",
-    "Origin": "https://live.bilibili.com",
-    "Sec-Fetch-Site": "same-site",
-    "Sec-Fetch-Mode": "cors",
-    "Sec-Fetch-Dest": "empty",
-    "Referer": "https://live.bilibili.com/",
-    # "Accept-Encoding": "gzip, deflate, br, zstd",
-    "Accept-Language": "en,zh-CN;q=0.9,zh;q=0.8,ja;q=0.7,zh-TW;q=0.6",
-    "Cookie": COOKIES,
+    "sec-ch-ua-platform": '"macOS"',
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36",
 }
 
 
-# 直播间签到
-def check_in():
-    url = "https://api.live.bilibili.com/xlive/web-ucenter/v1/sign/DoSign"
-    r = SESSION.get(url)
+def get_nav():
+    """Get account info. Visiting this API with a valid cookie constitutes
+    a login visit, which triggers the automatic daily coin reward on
+    Bilibili's server side.
+    """
+    url = f"{BASE_URL}/x/web-interface/nav"
+    r = SESSION.get(url, headers=HEADERS)
+    obj = r.json()
 
     global msg
-    try:
-        obj = r.json()
-        if obj["code"] == 0:
-            msg += [
-                {"name": "签到信息", "value": obj["data"]["text"]},
-                {"name": "特别信息", "value": f'本月已签到 {obj["data"]["hadSignDays"]} 天' +
-                                              (f'，{obj["data"]["specialText"]}' if obj["data"]["specialText"] else '')},
-            ]
-        elif obj["code"] == 1011040:
-            msg += [
-                {"name": "签到信息", "value": "今日已签到，无法重复签到"}
-            ]
+    if obj.get("code") != 0:
+        msg.append({"name": "登录信息", "value": "登录失败，Cookie 可能已经失效"})
+        return False
+
+    data = obj["data"]
+    uname = data.get("uname", "")
+    level = data.get("level_info", {}).get("current_level", "?")
+    masked = "█" * len(uname)
+    msg.append({"name": "登录信息", "value": f"{masked} (Lv{level})"})
+    return True
+
+
+def get_coins():
+    """Get coin balance from account.bilibili.com."""
+    url = "https://account.bilibili.com/site/getCoin"
+    r = SESSION.get(url, headers=HEADERS)
+    obj = r.json()
+
+    global msg
+    if obj.get("code") == 0:
+        money = obj.get("data", {}).get("money", 0)
+        msg.append({"name": "硬币余额", "value": str(money)})
+
+
+def get_coin_log():
+    """Check today's login reward from coin log.
+
+    Bilibili grants 1 coin automatically when a logged-in user visits the
+    site. The coin log API returns recent records (multiple days), so we
+    filter by today's date to determine if the login reward was claimed.
+    """
+    url = f"{BASE_URL}/x/member/web/coin/log?jsonp=jsonp"
+    r = SESSION.get(url, headers=HEADERS)
+    obj = r.json()
+
+    global msg
+    if obj.get("code") == 0:
+        today = time.strftime("%Y-%m-%d")
+        coin_list = obj.get("data", {}).get("list", [])
+        login_reward = [
+            c for c in coin_list
+            if c.get("reason") == "登录奖励" and c.get("time", "").startswith(today)
+        ]
+        if login_reward:
+            reward_time = login_reward[0].get("time", "")
+            msg.append({"name": "登录奖励", "value": f"已领取 {login_reward[0]['delta']} 硬币（{reward_time}）"})
         else:
-            msg += [
-                {"name": "签到信息", "value": "签到失败"}
-            ]
-    except Exception as e:
-        msg += [{"name": "check_in error", "value": e}]
+            msg.append({"name": "登录奖励", "value": "今日未领取"})
 
 
 def main():
-    SESSION.headers.update(HEADERS)
-    check_in()
     global msg
+    if not COOKIES:
+        return "No BILIBILI_COOKIES set"
+
+    if not get_nav():
+        return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
+
+    get_coins()
+    get_coin_log()
+
     return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(" Bilibili 签到开始 ".center(60, "="))
     print(main())
     print(" Bilibili 签到结束 ".center(60, "="), "\n")

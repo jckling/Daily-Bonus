@@ -14,13 +14,13 @@
 
 - [x] v2ex （铜币）
     - 如果使用默认的 Github Action Runner，由于时区不同，定时任务签的是**昨天**
-- [x] bilibili 直播（辣条）
+- [x] bilibili（硬币）
 - [x] yamibo 论坛（对象）
 - [x] yurifans 论坛（积分）
-- [x] uma 赛马娘每日签到（游戏内道具 + 积分）
+- [x] 赛马娘每日签到（游戏内道具 + 积分）
 - [x] telegram-bot 推送
-- [ ] ff14 （积分）【修复中】
-- [ ] 哔咔漫画打卡（哔咔）【未验证】
+- [ ] ff14（积分）
+- [ ] 哔咔漫画打卡（哔咔）
 
 Telegram 推送签到结果
 
@@ -60,9 +60,9 @@ Telegram 推送签到结果
 | TG_BOT_TOKEN | bot token   | [How Do I Create a Bot?](https://core.telegram.org/bots#how-do-i-create-a-bot)                                                                                                                              |
 | TG_USER_ID   | user id     | [How can I send a message to someone with my telegram bot using their Username](https://stackoverflow.com/questions/41664810/how-can-i-send-a-message-to-someone-with-my-telegram-bot-using-their-username) |
 
-### Uma
+### 赛马娘每日签到
 
-赛马娘每日签到网页使用 Cookie 登录，需要 `site`、`joy_jct`、`DedeUserID`、`SESSDATA` 四个 Cookie
+赛马娘每日签到使用 Cookie 登录，需要 `site`、`joy_jct`、`DedeUserID`、`SESSDATA` 四个 Cookie
 
 | Name        | Description |
 |-------------|-------------|
@@ -95,13 +95,13 @@ Yurifans 使用邮箱和密码登录
 
 ### Bilibili
 
-bilibili 直播使用 Cookie 登录
+bilibili 登录访问自动领取每日硬币奖励，需要 `SESSDATA` 和 `DedeUserID` 两个 Cookie
 
 | Name             | Description |
 |------------------|-------------|
 | BILIBILI_COOKIES | Cookie      |
 
-### FFXIV【修复中】
+### FFXIV
 
 FF14 积分商城使用账号和密码登录
 
@@ -113,7 +113,7 @@ FF14 积分商城使用账号和密码登录
 | FFXIV_SERVER_NAME | 服务器名        |
 | FFXIV_ROLE_NAME   | 角色名         |
 
-### Picacomic【未验证】
+### Picacomic
 
 哔咔漫画使用账号（邮箱/用户名）和密码登录
 
