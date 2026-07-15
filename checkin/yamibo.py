@@ -47,7 +47,10 @@ def get_sign_page():
 
     sign_match = re.search(r'sign=([a-f0-9]+)', r.text)
     sign_hash = sign_match.group(1) if sign_match else None
-    already_signed = "今日已打卡" in r.text
+    # Use button text to determine sign-in status: "点击打卡" = not signed, "今日已打卡" button = signed
+    btn_match = re.search(r'class="btna"[^>]*>([^<]+)<', r.text)
+    btn_text = btn_match.group(1).strip() if btn_match else ""
+    already_signed = "今日已打卡" in btn_text and "点击打卡" not in btn_text
 
     return sign_hash, already_signed, r.text
 
@@ -59,9 +62,7 @@ def check_in(sign_hash):
 
     global msg
     if "打卡成功" in r.text:
-        match = re.search(r'获得.*?(\d+).*?对象', r.text)
-        reward = match.group(0) if match else "签到成功"
-        msg.append({"name": "签到信息", "value": f"签到成功，{reward}"})
+        msg.append({"name": "签到信息", "value": "签到成功"})
         return True
     elif "打过卡" in r.text:
         msg.append({"name": "签到信息", "value": "今日已签到"})
