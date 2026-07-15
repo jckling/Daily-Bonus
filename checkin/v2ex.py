@@ -126,6 +126,19 @@ def main():
     # Always query balance for current state and today's reward
     query_balance()
 
+    # If check_in failed but balance page shows today's reward, the sign-in
+    # actually succeeded (redeem response was blocked by Cloudflare)
+    has_reward = any(m["name"] == "今日奖励" for m in msg)
+    has_fail = any(m["name"] == "签到信息" and "失败" in m["value"] for m in msg)
+    if has_reward and has_fail:
+        msg = [m for m in msg if not (m["name"] == "签到信息" and "失败" in m["value"])]
+        msg.insert(1, {"name": "签到信息", "value": "签到成功"})
+
+    # If check_in failed and no today's reward, the cookie may be expired
+    has_fail = any(m["name"] == "签到信息" and "失败" in m["value"] for m in msg)
+    if has_fail and not has_reward:
+        msg.append({"name": "提示", "value": "签到可能失败，请检查 Cookie 是否过期"})
+
     return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
 
