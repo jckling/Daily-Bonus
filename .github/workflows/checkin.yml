@@ -22,7 +22,7 @@ jobs:
       YAMIBO_COOKIES: ${{ secrets.YAMIBO_COOKIES }}
       YURIFANS_EMAIL: ${{ secrets.YURIFANS_EMAIL }}
       YURIFANS_PASSWORD: ${{ secrets.YURIFANS_PASSWORD }}
-      PICA_EMAIL: ${{ secrets.PICA_EMAIL }}
+      PICA_USERNAME: ${{ secrets.PICA_USERNAME }}
       PICA_PASSWORD: ${{ secrets.PICA_PASSWORD }}
       UMA_COOKIES: ${{ secrets.UMA_COOKIES }}
       TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}

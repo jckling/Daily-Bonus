@@ -13,14 +13,13 @@
 实现功能
 
 - [x] v2ex （铜币）
-    - 如果使用默认的 Github Action Runner，由于时区不同，定时任务签的是**昨天**
 - [x] bilibili（硬币）
 - [x] yamibo 论坛（对象）
 - [x] yurifans 论坛（积分）
 - [x] 赛马娘每日签到（游戏内道具 + 积分）
+- [x] 哔咔漫画（经验）
 - [x] telegram-bot 推送
-- [ ] ff14（积分）
-- [ ] 哔咔漫画打卡（哔咔）
+- [ ] ff14（积分）【修复中】
 
 Telegram 推送签到结果
 
@@ -43,7 +42,7 @@ Telegram 推送签到结果
 
 **注意**
 
-1. 300 论坛使用 github runner 签到时会遇到 cloudflare 人机验证
+1. Yamibo 论坛使用 github runner 签到时会遇到 WAF 拦截，建议本地定时运行
 2. 签到失败可以在 Action 页面尝试 `Re-run`，例如 5.8 已手动完成 v2ex 签到，5.9 定时运行签到昨天显示失败，手动触发重新运行签到成功
 
 | runner          | 定时运行                                      | 手动触发                                    |
@@ -101,7 +100,7 @@ bilibili 登录访问自动领取每日硬币奖励，需要 `SESSDATA` 和 `Ded
 |------------------|-------------|
 | BILIBILI_COOKIES | Cookie      |
 
-### FFXIV
+### FFXIV【修复中】
 
 FF14 积分商城使用账号和密码登录
 
@@ -119,7 +118,7 @@ FF14 积分商城使用账号和密码登录
 
 | Name          | Description |
 |---------------|-------------|
-| PICA_EMAIL    | 邮箱或用户名      |
+| PICA_USERNAME | 邮箱或用户名      |
 | PICA_PASSWORD | 密码          |
 
 ## 许可证
@@ -138,8 +137,6 @@ FF14 积分商城使用账号和密码登录
 
 - [构建和测试 Python](https://docs.github.com/cn/actions/guides/building-and-testing-python)
 - [为用户帐户仓库创建密码](https://docs.github.com/cn/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
-- [mengshouer/CheckinBox](https://github.com/mengshouer/CheckinBox)
-- [Github Action use existing Python script and get String output](https://stackoverflow.com/questions/61656704/github-action-use-existing-python-script-and-get-string-output)
 - [Workflow commands for GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions)
-- [niuhuan/pica-go](https://github.com/niuhuan/pica-go)
+- [ewigl/picacg-auto-checkin](https://github.com/ewigl/picacg-auto-checkin)
 - [Sitoi/dailycheckin](https://github.com/Sitoi/dailycheckin)
