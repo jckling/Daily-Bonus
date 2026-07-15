@@ -56,31 +56,35 @@ def get_sign_page():
 
 
 def check_in(sign_hash):
-    """Perform sign-in by visiting the sign URL with the one-time hash."""
+    """Perform sign-in by visiting the sign URL with the one-time hash.
+
+    Returns (success, response_text).
+    """
     url = f"{BASE_URL}/plugin.php?id=zqlj_sign&sign={sign_hash}"
     r = SESSION.get(url, headers=HEADERS)
 
     global msg
     if "打卡成功" in r.text:
         msg.append({"name": "签到信息", "value": "签到成功"})
-        return True
+        return True, r.text
     elif "打过卡" in r.text:
         msg.append({"name": "签到信息", "value": "今日已签到"})
-        return True
+        return True, r.text
     elif "需要先登录" in r.text:
         msg.append({"name": "签到信息", "value": "登录失败，Cookie 可能已经失效"})
-        return False
+        return False, r.text
     else:
         msg.append({"name": "签到信息", "value": "签到失败，未能从页面获取结果"})
-        return False
+        return False, r.text
 
 
 def query_stats(page_text):
     """Query sign stats from sign page HTML and credit info from credit page."""
     global msg
 
-    # Sign stats from the already-fetched sign page
+    # Sign stats from the sign page
     stats_map = {
+        "最近打卡": "签到时间",
         "本月打卡": "本月签到",
         "连续打卡": "连续签到",
         "累计打卡": "累计签到",
@@ -123,7 +127,10 @@ def main():
         return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
     if not already_signed and sign_hash:
-        check_in(sign_hash)
+        ok, _ = check_in(sign_hash)
+        # Re-fetch sign page to get updated stats (including latest sign time)
+        r2 = SESSION.get(f"{BASE_URL}/plugin.php?id=zqlj_sign", headers=HEADERS)
+        page_text = r2.text
     else:
         msg.append({"name": "签到信息", "value": "今日已签到，无需重复签到"})
 

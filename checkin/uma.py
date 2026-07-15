@@ -201,8 +201,11 @@ def get_record():
     obj = r.json()
     if obj.get("code") == 0:
         data = obj.get("data", {})
-        return data.get("total", 0)
-    return 0
+        total = data.get("total", 0)
+        records = data.get("data", [])
+        latest_time = records[-1].get("signDateTimeString", "") if records else ""
+        return total, latest_time
+    return 0, ""
 
 
 def main():
@@ -214,22 +217,32 @@ def main():
     status = get_status()
     if status == 1:
         msg.append({"name": "签到信息", "value": "今日已签到"})
-        total = get_record()
+        total, sign_time = get_record()
         daily, milestone = get_today_reward(total)
         if daily:
             msg.append({"name": "今日奖励", "value": daily})
         if milestone:
             msg.append({"name": "累计签到奖励", "value": milestone})
+        if total > 0:
+            sign_str = f"已签到 {total} 天"
+            if sign_time:
+                sign_str += f"（{sign_time}）"
+            msg.append({"name": "本月签到", "value": sign_str})
     elif status == 0:
         result = check_in()
         if result.get("code") == 0:
             msg.append({"name": "签到信息", "value": "签到成功"})
-            total = get_record()
+            total, sign_time = get_record()
             daily, milestone = get_today_reward(total)
             if daily:
                 msg.append({"name": "今日奖励", "value": daily})
             if milestone:
                 msg.append({"name": "累计签到奖励", "value": milestone})
+            if total > 0:
+                sign_str = f"已签到 {total} 天"
+                if sign_time:
+                    sign_str += f"（{sign_time}）"
+                msg.append({"name": "本月签到", "value": sign_str})
         else:
             msg.append({"name": "签到信息", "value": f'签到失败: {result.get("message", "unknown")}'})
     else:
@@ -237,11 +250,9 @@ def main():
 
     # Query monthly record (if not already fetched)
     if "本月签到" not in [m["name"] for m in msg]:
-        total = get_record()
+        total, sign_time = get_record()
         if total > 0:
             msg.append({"name": "本月签到", "value": f"已签到 {total} 天"})
-    elif total > 0:
-        msg.append({"name": "本月签到", "value": f"已签到 {total} 天"})
 
     # Query point balance
     points = get_draw_assert()

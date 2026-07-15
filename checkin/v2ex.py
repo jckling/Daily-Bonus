@@ -5,6 +5,7 @@
 
 import os
 import re
+import time
 
 import requests
 from lxml import html
@@ -95,10 +96,20 @@ def query_balance():
 
     global msg
 
-    # Today's reward from transaction history
-    reward_match = re.search(r"(\d{8}) 的每日登录奖励 (\d+) 铜币", r.text)
+    # Today's reward from transaction history (includes timestamp)
+    today = time.strftime("%Y%m%d")
+    reward_match = re.search(rf"{today} 的每日登录奖励 (\d+) 铜币", r.text)
     if reward_match:
-        msg.append({"name": "今日奖励", "value": f"{reward_match.group(2)} 铜币"})
+        # Find the timestamp in the same table row (previous td)
+        reward_idx = r.text.find(f"{today} 的每日登录奖励")
+        row_start = r.text.rfind("<tr>", 0, reward_idx)
+        row_html = r.text[row_start:reward_idx + 50] if row_start >= 0 else ""
+        ts_match = re.search(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} [+-]\d{2}:\d{2})", row_html)
+        ts = ts_match.group(1) if ts_match else ""
+        reward_str = f"{reward_match.group(1)} 铜币"
+        if ts:
+            reward_str += f"（{ts}）"
+        msg.append({"name": "今日奖励", "value": reward_str})
 
     # Account balance
     balance_nodes = tree.xpath('//div[@class="balance_area bigger"]/text()')
@@ -133,6 +144,18 @@ def main():
     if has_reward and has_fail:
         msg = [m for m in msg if not (m["name"] == "签到信息" and "失败" in m["value"])]
         msg.insert(1, {"name": "签到信息", "value": "签到成功"})
+
+    # Append timestamp from 今日奖励 to 签到信息
+    reward_ts = ""
+    for m in msg:
+        if m["name"] == "今日奖励" and "（" in m["value"]:
+            reward_ts = m["value"][m["value"].find("（"):]
+            break
+    if reward_ts:
+        for m in msg:
+            if m["name"] == "签到信息":
+                m["value"] += reward_ts
+                break
 
     # If check_in failed and no today's reward, the cookie may be expired
     has_fail = any(m["name"] == "签到信息" and "失败" in m["value"] for m in msg)
