@@ -6,12 +6,11 @@
 import os
 import re
 
-import requests
+from curl_cffi import requests as cffi_requests
 from lxml import html
 
 # cookies
 COOKIES = os.environ.get("YAMIBO_COOKIES")
-SESSION = requests.Session()
 msg = []
 
 BASE_URL = "https://bbs.yamibo.com"
@@ -21,7 +20,7 @@ HEADERS = {
     "accept-language": "en-US,en;q=0.9,zh-TW;q=0.8,zh;q=0.7",
     "cookie": COOKIES or "",
     "referer": "https://bbs.yamibo.com/",
-    "sec-ch-ua": '"Not;A-Brand";v="8", "Chromium";v="150", "Google Chrome";v="150"',
+    "sec-ch-ua": '"Not;A=Brand";v="8", "Chromium";v="150", "Google Chrome";v="150"',
     "sec-ch-ua-mobile": "?0",
     "sec-ch-ua-platform": '"macOS"',
     "sec-fetch-dest": "document",
@@ -38,7 +37,7 @@ def get_sign_page():
     Returns (sign_hash, already_signed, page_text) or (None, None, None) if not logged in.
     """
     url = f"{BASE_URL}/plugin.php?id=zqlj_sign"
-    r = SESSION.get(url, headers=HEADERS)
+    r = cffi_requests.get(url, headers=HEADERS, impersonate="chrome")
 
     global msg
     if "需要先登录" in r.text:
@@ -67,7 +66,7 @@ def check_in(sign_hash):
     Returns (success, response_text).
     """
     url = f"{BASE_URL}/plugin.php?id=zqlj_sign&sign={sign_hash}"
-    r = SESSION.get(url, headers=HEADERS)
+    r = cffi_requests.get(url, headers=HEADERS, impersonate="chrome")
 
     global msg
     if "打卡成功" in r.text:
@@ -103,7 +102,7 @@ def query_stats(page_text):
 
     # Credit info from credit page
     url = f"{BASE_URL}/home.php?mod=spacecp&ac=credit"
-    r = SESSION.get(url, headers=HEADERS)
+    r = cffi_requests.get(url, headers=HEADERS, impersonate="chrome")
     tree = html.fromstring(r.content)
     items = tree.xpath('//ul[@class="creditl mtm bbda cl"]/li')
 
@@ -135,7 +134,7 @@ def main():
     if not already_signed and sign_hash:
         ok, _ = check_in(sign_hash)
         # Re-fetch sign page to get updated stats (including latest sign time)
-        r2 = SESSION.get(f"{BASE_URL}/plugin.php?id=zqlj_sign", headers=HEADERS)
+        r2 = cffi_requests.get(f"{BASE_URL}/plugin.php?id=zqlj_sign", headers=HEADERS, impersonate="chrome")
         page_text = r2.text
     else:
         msg.append({"name": "签到信息", "value": "今日已签到，无需重复签到"})
