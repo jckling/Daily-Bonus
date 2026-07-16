@@ -69,7 +69,7 @@ Telegram 推送签到结果
 
 ### V2EX
 
-V2EX 论坛使用 Cookie 登录，需要 `PB3_SESSION` 和 `A2` 两个 Cookie
+V2EX 论坛使用 Cookie 登录，需要 `PB3_SESSION`、`A2`、`V2EX_LANG` 和 `V2EX_TAB` 四个 Cookie
 
 | Name         | Description |
 |--------------|-------------|

@@ -160,7 +160,15 @@ def main():
     # If check_in failed and no today's reward, the cookie may be expired
     has_fail = any(m["name"] == "签到信息" and "失败" in m["value"] for m in msg)
     if has_fail and not has_reward:
-        msg.append({"name": "提示", "value": "签到可能失败，请检查 Cookie 是否过期"})
+        # Check if already claimed today (mission page shows "已领取")
+        # This covers the case where CI runs close to midnight and the
+        # daily reset hasn't happened yet for V2EX's timezone
+        already = any(m["name"] == "登录信息" and "已领取" in m.get("value", "") for m in msg)
+        if already:
+            msg = [m for m in msg if not (m["name"] == "签到信息" and "失败" in m["value"])]
+            msg.append({"name": "签到信息", "value": "今日已签到"})
+        else:
+            msg.append({"name": "提示", "value": "签到可能失败，请检查 Cookie 是否过期"})
 
     return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
