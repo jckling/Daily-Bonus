@@ -31,11 +31,14 @@ HEADERS = {
 }
 
 
+def visit_homepage():
+    """Visit bilibili.com homepage to trigger the automatic daily coin reward."""
+    url = "https://www.bilibili.com/"
+    SESSION.get(url, headers=HEADERS)
+
+
 def get_nav():
-    """Get account info. Visiting this API with a valid cookie constitutes
-    a login visit, which triggers the automatic daily coin reward on
-    Bilibili's server side.
-    """
+    """Get account info and trigger login visit."""
     url = f"{BASE_URL}/x/web-interface/nav"
     r = SESSION.get(url, headers=HEADERS)
     obj = r.json()
@@ -98,6 +101,10 @@ def main():
 
     if not get_nav():
         return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
+
+    # Visit homepage to trigger automatic daily coin reward
+    visit_homepage()
+    time.sleep(2)
 
     get_coins()
     get_coin_log()
