@@ -19,7 +19,7 @@
 - [x] 赛马娘每日签到（游戏内道具 + 积分）
 - [x] 哔咔漫画（经验）
 - [x] telegram-bot 推送
-- [ ] ff14（积分）【修复中】
+- [x] ff14 商城（积分）
 
 Telegram 推送签到结果
 
@@ -100,17 +100,14 @@ bilibili 登录访问自动领取每日硬币奖励，需要 `SESSDATA` 和 `Ded
 |------------------|-------------|
 | BILIBILI_COOKIES | Cookie      |
 
-### FFXIV【修复中】
+### FFXIV
 
-FF14 积分商城使用账号和密码登录
+FF14 商城使用账号和密码登录，登录可能触发验证码
 
-| Name              | Description |
-|-------------------|-------------|
-| FFIXV_USERNAME    | 账号          |
-| FFIXV_PASSWORD    | 密码          |
-| FFXIV_AREA_NAME   | 大区名         |
-| FFXIV_SERVER_NAME | 服务器名        |
-| FFXIV_ROLE_NAME   | 角色名         |
+| Name             | Description |
+|------------------|-------------|
+| FFXIV_USERNAME   | 手机号或邮箱      |
+| FFXIV_PASSWORD   | 密码          |
 
 ### Picacomic
 
@@ -118,7 +115,7 @@ FF14 积分商城使用账号和密码登录
 
 | Name          | Description |
 |---------------|-------------|
-| PICA_USERNAME | 邮箱或用户名      |
+| PICA_USERNAME | 用户名或邮箱      |
 | PICA_PASSWORD | 密码          |
 
 ## 许可证

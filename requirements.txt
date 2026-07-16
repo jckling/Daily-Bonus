@@ -33,6 +33,8 @@ mdurl==0.1.2
     # via markdown-it-py
 pycparser==3.0
     # via cffi
+pycryptodome==3.23.0
+    # via daily-bonus (pyproject.toml)
 pygments==2.20.0
     # via rich
 python-telegram-bot==22.8

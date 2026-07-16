@@ -25,6 +25,8 @@ jobs:
       PICA_USERNAME: ${{ secrets.PICA_USERNAME }}
       PICA_PASSWORD: ${{ secrets.PICA_PASSWORD }}
       UMA_COOKIES: ${{ secrets.UMA_COOKIES }}
+      FFXIV_USERNAME: ${{ secrets.FFXIV_USERNAME }}
+      FFXIV_PASSWORD: ${{ secrets.FFXIV_PASSWORD }}
       TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
       TG_USER_ID: ${{ secrets.TG_USER_ID }}
 

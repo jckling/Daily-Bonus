@@ -1,214 +1,229 @@
 # -*- coding: utf-8 -*-
-# @File     : ff14.py
+# @File     : ffxiv.py
 # @Time     : 2021/03/24 15:43
 # @Author   : Jckling
 
+import base64
 import json
 import os
+import re
 import time
 
-import requests
+from Crypto.Cipher import PKCS1_v1_5
+from Crypto.PublicKey import RSA
+from curl_cffi import requests as cffi_requests
 
 # info
-USERNAME = os.environ.get('FFXIV_USERNAME')
-PASSWORD = os.environ.get('FFXIV_PASSWORD')
-AREA_NAME = os.environ.get('FFXIV_AREA_NAME')
-SERVER_NAME = os.environ.get('FFXIV_SERVER_NAME')
-ROLE_NAME = os.environ.get('FFXIV_ROLE_NAME')
+USERNAME = os.environ.get("FFXIV_USERNAME")
+PASSWORD = os.environ.get("FFXIV_PASSWORD")
+msg = []
 
-# cookies
-COOKIES = {}
+BASE_URL = "https://sqmallservice.u.sdo.com"
+MERCHANT_ID = "1"
+SESSION = cffi_requests.Session()
+
+# RSA public key from SDO login page (jsencrypt_helper.js)
+PUBLIC_KEY_B64 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCrLCvPQVj1dYDdtb34bUGrxAYHLDMQdsjbk7+pY/ugKdHKhxQo1E43gt4HMgjFuirvaGfh1NJ2FCX9thillLZlHhkNOUcEQSbpcJycQ9wq7FBtOk7lE0dBBA9t3Zk/qBx2A2xPVvVNf9lNdNDDp2vXhQ549H9hg1s1TPHFEags3QIDAQAB"
+
+LOGIN_HEADERS = {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9,zh-TW;q=0.8,zh;q=0.7",
+    "referer": "https://login.u.sdo.com/",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36",
+}
+
+API_HEADERS = {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,zh-TW;q=0.8,zh;q=0.7",
+    "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    "origin": "https://qu.sdo.com",
+    "qu-deploy-platform": "1",
+    "qu-hardware-platform": "3",
+    "qu-merchant-id": MERCHANT_ID,
+    "qu-software-platform": "1",
+    "qu-web-host": "qu.sdo.com",
+    "referer": "https://qu.sdo.com/",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36",
+}
 
 
-# 设置 cookies
-def set_cookies(items):
-    global COOKIES
-    for i in items:
-        COOKIES.setdefault(i[0], i[1])
-
-
-# 登录
 def login():
-    headers = {
-        "Host": "cas.sdo.com",
-        "Connection": "keep-alive",
-        "sec-ch-ua": '"Google Chrome";v="89", "Chromium";v="89", ";Not A Brand";v="99"',
-        "sec-ch-ua-mobile": "?0",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
-        "Accept": "*/*",
-        "Sec-Fetch-Site": "same-site",
-        "Sec-Fetch-Mode": "no-cors",
-        "Sec-Fetch-Dest": "script",
-        "Referer": "https://login.u.sdo.com/",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7,zh-TW;q=0.6,da;q=0.5",
-        "Cookie": "CASCID=CIDF4FE36AE09944418AEBD8394F75B8ED3; hasAdsr=1",
+    """Login with username and password via SDO CAS.
+
+    Returns True if login succeeds.
+    """
+    ts = str(int(time.time() * 1000))
+    common_params = {
+        "appId": "6666", "areaId": "-1", "serviceUrl": "https://qu.sdo.com/game/1",
+        "productVersion": "v5", "frameType": "3", "locale": "zh_CN", "version": "21",
+        "tag": "20", "authenSource": "2", "productId": "2", "scene": "login",
+        "usage": "aliCode", "bizType": "", "source": "pc", "extendInfo": "{}", "_": ts,
     }
 
-    params = {
-        "_": int(round(time.time() * 1000)),
-        "appId": "100001900",
-        "areaId": "1",
-        "authenSource": "2",
-        "autoLoginFlag": "0",
-        "callback": "staticLogin_JSONPMethod",
-        # "customSecurityLevel": "2",
-        "frameType": "3",
-        "inputUserId": USERNAME,
-        # "isEncrypt": "1",
-        "locale": "zh_CN",
-        "password": PASSWORD,
-        "productId": "2",
-        "productVersion": "v5",
-        "scene": "login",
-        "serviceUrl": "https://actff1.web.sdo.com/20180707jifen/Server/SDOLogin.ashx?returnPage=index.html",
-        "tag": "20",
-        "usage": "aliCode",
-        "version": "21",
-    }
+    # Step 1: ssoLogin
+    SESSION.get(
+        "https://w.cas.sdo.com/authen/ssoLogin.jsonp",
+        headers=LOGIN_HEADERS,
+        params={**common_params, "callback": "ssoLogin_JSONPMethod"},
+        impersonate="chrome",
+    )
 
-    url = "https://cas.sdo.com/authen/staticLogin.jsonp"
-    r = requests.get(url, headers=headers, params=params)
-    set_cookies(r.cookies.items())
+    # Step 2: getSystemConfig (get bizContext)
+    r2 = SESSION.get(
+        "https://n2.cas.sdo.com/authen/v2/getSystemConfig.jsonp",
+        headers=LOGIN_HEADERS,
+        params={**common_params, "callback": "getSystemConfig_JSONPMethod", "scene": "sendSms"},
+        impersonate="chrome",
+    )
+    json_str = r2.text[r2.text.find("(") + 1:r2.text.rfind(")")]
+    biz_context = json.loads(json_str)["data"]["bizContext"]
+    extend_info = json.dumps({"bizContext": biz_context})
 
-    # 获取 ticket 字段
-    text = r.text
-    text = text[text.find("(") + 1: text.rfind(")")]
-    obj = json.loads(text)
-    if "ticket" in obj["data"]:
-        print('登录成功')
-        return obj["data"]["ticket"]
-    elif "captchaParams" in obj["data"]:
-        print("登录失败次数过多，要求通过验证码")
+    # Step 3: checkAccountType
+    SESSION.get(
+        "https://w.cas.sdo.com/authen/checkAccountType.jsonp",
+        headers=LOGIN_HEADERS,
+        params={**common_params, "callback": "checkAccountType_JSONPMethod", "inputUserId": USERNAME, "extendInfo": extend_info},
+        impersonate="chrome",
+    )
+
+    # Step 4: staticLogin (RSA encrypt password)
+    rsa_key = RSA.import_key(base64.b64decode(PUBLIC_KEY_B64))
+    cipher = PKCS1_v1_5.new(rsa_key)
+    encrypted_pwd = base64.b64encode(cipher.encrypt(PASSWORD.encode())).decode()
+
+    r4 = SESSION.get(
+        "https://w.cas.sdo.com/authen/staticLogin.jsonp",
+        headers=LOGIN_HEADERS,
+        params={**common_params, "callback": "staticLogin_JSONPMethod", "inputUserId": USERNAME, "password": encrypted_pwd, "isEncrypt": "1", "autoLoginFlag": "0", "extendInfo": extend_info},
+        impersonate="chrome",
+    )
+
+    global msg
+    # Check for captcha
+    if "captchaParams" in r4.text and "ticket" not in r4.text:
+        msg.append({"name": "登录信息", "value": "登录需要验证码，请稍后重试或手动登录"})
+        return False
+
+    ticket_match = re.search(r'"ticket"\s*:\s*"([^"]+)"', r4.text)
+    if not ticket_match:
+        error_match = re.search(r'"return_message"\s*:\s*"([^"]*)"', r4.text)
+        error_msg = error_match.group(1) if error_match else "unknown error"
+        msg.append({"name": "登录信息", "value": f"登录失败，{error_msg}"})
+        return False
+
+    ticket = ticket_match.group(1)
+
+    # Step 5: Visit qu.sdo.com with ticket to establish session
+    SESSION.get(
+        f"https://qu.sdo.com/game/1?ticket={ticket}",
+        headers={**LOGIN_HEADERS, "origin": "https://qu.sdo.com", "referer": "https://qu.sdo.com/"},
+        impersonate="chrome",
+    )
+
+    # Step 6: Login at sqmallservice with ticket
+    ts2 = str(int(time.time() * 1000))
+    r6 = SESSION.get(
+        f"{BASE_URL}/api/us/login?ticket={ticket}&_={ts2}",
+        headers={**LOGIN_HEADERS, "origin": "https://qu.sdo.com", "referer": "https://qu.sdo.com/"},
+        impersonate="chrome",
+    )
+    obj = r6.json()
+    if obj.get("resultCode") == 0:
+        nick = obj.get("data", {}).get("sndaAccount", {}).get("nickName", "")
+        masked = "█" * len(nick) if nick else "?"
+        msg.append({"name": "登录信息", "value": masked})
+        return True
     else:
-        print(obj["data"]["failReason"])
-    return ""
+        msg.append({"name": "登录信息", "value": "登录失败，session 建立失败"})
+        return False
 
 
-# 获取 cookies
-def get_cookies(ticket):
-    params = {
-        "_": "1617715671699",
-        "appId": "100001900",
-        "areaId": "1",
-        "authenSource": "2",
-        "callback": "getPromotionInfo_JSONPMethod",
-        "frameType": "3",
-        "locale": "zh_CN",
-        "productId": "2",
-        "productVersion": "v5",
-        "scene": "login",
-        "serviceUrl": "https://actff1.web.sdo.com/20180707jifen/Server/SDOLogin.ashx?returnPage=index.html",
-        "tag": "20",
-        "usage": "aliCode",
-        "version": "21",
-        "customSecurityLevel": "2",
-    }
-
-    url = "https://cas.sdo.com/authen/getPromotionInfo.jsonp"
-    r = requests.get(url, params=params, cookies=COOKIES)
-    set_cookies(r.cookies.items())
-
-
-# 认证
-def auth(ticket):
-    params = {
-        "returnPage": "index.html",
-        "ticket": ticket,
-    }
-
-    url = "https://actff1.web.sdo.com//20180707jifen/Server/SDOLogin.ashx"
-    r = requests.get(url, params=params, cookies=COOKIES)
-    set_cookies(r.cookies.items())
-
-
-# 选择角色
-def select_role():
-    if AREA_NAME == "陆行鸟":
-        ipid = "1"
-    elif AREA_NAME == "莫古力":
-        ipid = "6"
-    elif AREA_NAME == "猫小胖":
-        ipid = "7"
-    elif AREA_NAME == "豆豆柴":
-        ipid = "8"
-
-    params = {
-        "method": "queryff14rolelist",
-        "ipid": ipid,
-        "i": "0.6531217873613295",
-    }
-
-    url = "http://act.ff.sdo.com/20180707jifen/Server/ff14/HGetRoleList.ashx"
-    r = requests.get(url, params=params, cookies=COOKIES)
-
-    # 获取角色 id
+def get_check_in_status():
+    """Get check-in status. Returns True if already signed in today."""
+    r = SESSION.get(
+        f"{BASE_URL}/api/us/checkIn/getStatus?merchantId={MERCHANT_ID}",
+        headers=API_HEADERS,
+        impersonate="chrome",
+    )
     obj = r.json()
-    attach = obj["Attach"]
-    role = "{0}|{1}|{2}"
-    for r in attach:
-        if r["worldnameZh"] == SERVER_NAME and r["name"] == ROLE_NAME:
-            role = role.format(r["cicuid"], r["worldname"], r["groupid"])
-            break
 
-    # 选择角色
-    areaid = ipid
-    params = {
-        "method": "setff14role",
-        "AreaId": areaid,
-        "AreaName": AREA_NAME,
-        "RoleName": "[%s]%s" % (SERVER_NAME, ROLE_NAME),
-        "Role": role,
-        "i": "0.16795254979041618",
-    }
-
-    r = requests.post(url, params=params, cookies=COOKIES)
-    obj = r.json()
-    if obj["Success"]:
-        print("角色选定成功")
-    else:
-        print(obj["Message"])
+    global msg
+    if obj.get("resultCode") == 0:
+        data = obj.get("data", {})
+        is_check_in = data.get("isCheckIn", 0)
+        recent = data.get("recentDetails", [])
+        if is_check_in:
+            sign_time = recent[0] if recent else ""
+            for m in msg:
+                if m["name"] == "签到信息":
+                    m["value"] = f"签到成功（{sign_time}）" if "签到成功" in m.get("value", "") else f"今日已签到（{sign_time}）"
+                    return True
+            msg.append({"name": "签到信息", "value": f"今日已签到（{sign_time}）"})
+            return True
+    return False
 
 
-# 签到
 def check_in():
-    params = {
-        "method": "signin",
-        "i": "0.8613162421160268"
-    }
-
-    url = "http://act.ff.sdo.com/20180707jifen/Server/User.ashx"
-    r = requests.post(url, params=params, cookies=COOKIES)
-
+    """Perform daily check-in."""
+    r = SESSION.put(
+        f"{BASE_URL}/api/us/integration/checkIn",
+        headers=API_HEADERS,
+        data=f"merchantId={MERCHANT_ID}",
+        impersonate="chrome",
+    )
     obj = r.json()
-    if obj["Success"]:
-        print("签到成功")
+
+    global msg
+    result_code = obj.get("resultCode", 0)
+    result_msg = obj.get("resultMsg", "")
+
+    if result_code == 0:
+        data = obj.get("data", {})
+        reward = data.get("acquireIntegration", 0)
+        msg.append({"name": "签到信息", "value": f"签到成功，获得 {reward} 积分"})
+    elif "今日已签到" in result_msg or "重复" in result_msg:
+        msg.append({"name": "签到信息", "value": "今日已签到"})
     else:
-        print(obj["Message"])
+        msg.append({"name": "签到信息", "value": f"签到失败，{result_msg}"})
 
 
-# 查询积分
-def query_points():
-    params = {
-        "method": "querymystatus",
-        "i": "0.6792009762893907"
-    }
-
-    url = "http://act.ff.sdo.com/20180707jifen/Server/User.ashx"
-    r = requests.post(url, params=params, cookies=COOKIES)
-
+def get_balance():
+    """Get integral balance."""
+    r = SESSION.get(
+        f"{BASE_URL}/api/rs/member/integral/balance?merchantId={MERCHANT_ID}",
+        headers=API_HEADERS,
+        impersonate="chrome",
+    )
     obj = r.json()
-    points = json.loads(obj["Attach"])["Jifen"]
-    print("当前积分为: %d" % points)
+
+    global msg
+    if obj.get("resultCode") == 0:
+        data = obj.get("data", {})
+        balance = data.get("balance", 0)
+        name = data.get("integralName", "积分")
+        msg.append({"name": "积分余额", "value": f"{balance} {name}"})
+
+
+def main():
+    global msg
+    if not USERNAME or not PASSWORD:
+        return "No FFXIV_USERNAME or FFXIV_PASSWORD set"
+
+    if not login():
+        return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
+
+    already_signed = get_check_in_status()
+    if not already_signed:
+        check_in()
+        get_check_in_status()
+
+    get_balance()
+
+    return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
 
 
 if __name__ == "__main__":
     print(" FF14 签到开始 ".center(60, "="))
-    ticket = login()
-    if ticket != "":
-        get_cookies(ticket)
-        auth(ticket)
-        select_role()
-        check_in()
-        query_points()
+    print(main())
     print(" FF14 签到结束 ".center(60, "="), "\n")
