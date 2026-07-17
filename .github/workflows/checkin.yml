@@ -1,11 +1,9 @@
 name: Daily Bonus
 
 on:
-  push:
-    branches:
-      - master
   schedule:
     - cron: '30 23 * * *'
+  workflow_dispatch:
 
 jobs:
   checkin:
