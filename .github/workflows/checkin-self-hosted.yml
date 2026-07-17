@@ -1,15 +1,13 @@
-name: Daily Bonus
+name: Daily Bonus (Self-hosted)
 
 on:
-  push:
-    branches:
-      - master
   schedule:
-    - cron: '30 23 * * *'
+    - cron: '30 07 * * *'
+  workflow_dispatch:
 
 jobs:
   checkin:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     env:
       V2EX_COOKIES: ${{ secrets.V2EX_COOKIES }}
@@ -29,17 +27,10 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v6
 
-      - name: Set timezone
-        run: sudo timedatectl set-timezone 'Asia/Shanghai'
-
-      - name: Echo current time
-        run: timedatectl
-
       - name: Set up Python 3.13
         uses: actions/setup-python@v6
         with:
           python-version: '3.13'
-          cache: 'pip'
 
       - name: Install dependencies
         run: pip install -r requirements.txt
