@@ -102,12 +102,14 @@ bilibili 登录访问自动领取每日硬币奖励，需要 `SESSDATA` 和 `Ded
 
 ### FFXIV
 
-FF14 商城使用账号和密码登录，登录可能触发验证码
+FF14 商城使用账号和密码登录
 
 | Name             | Description |
 |------------------|-------------|
 | FFXIV_USERNAME   | 手机号或邮箱      |
 | FFXIV_PASSWORD   | 密码          |
+
+> ⚠️ 登录接口已接入 Geetest 风控，脚本登录大概率触发滑块验证码，目前无法自动绕过。
 
 ### Picacomic
 
