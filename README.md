@@ -6,137 +6,168 @@
     <a href="https://github.com/jckling/Daily-Bonus/issues"><img src="https://img.shields.io/github/issues/jckling/Daily-Bonus" alt="GitHub issues"></a>
 </p>
 
-使用 Github Action 签到，用哪个就配置相应的环境变量，默认输出到控制台，支持 Telegram 消息推送。
+自动签到脚本，通过 GitHub Actions 定时执行，支持 Telegram 推送签到结果。
 
-## 说明
+> 如果觉得有用，右上角点个 ⭐ Star 支持一下，感谢！
 
-实现功能
+## 功能
 
-- [x] v2ex （铜币）
-- [x] bilibili（硬币）
-- [x] yamibo 论坛（对象）
-- [x] yurifans 论坛（积分）
-- [x] 赛马娘每日签到（游戏内道具 + 积分）
-- [x] 哔咔漫画（经验）
-- [x] telegram-bot 推送
-- [x] ff14 商城（积分）
+| 站点 | 方式 | 奖励 |
+|------|------|------|
+| V2EX | Cookie | 铜币 |
+| Bilibili | Cookie | 硬币 |
+| Yamibo（百合会 / 300） | Cookie | 对象 |
+| Yurifans | 账号密码 | 积分 |
+| 赛马娘 | Cookie | 游戏内道具 + 积分 |
+| 哔咔漫画 | 账号密码 | 经验 |
+| ~~FF14 商城~~ | ~~账号密码~~ | ~~积分~~ |
 
-Telegram 推送签到结果
+> ⚠️ **FF14 商城签到已废弃**。SDO 登录接口接入了 Geetest 风控，脚本登录会触发滑块验证码，无法自动绕过。
 
-![](screenshots/result.png)
+Telegram 推送：
 
-## 使用方式
+![](screenshots/telegram.jpeg)
 
-0. 右上角 **star** 本仓库（可选/支持）
-1. 右上角 **fork** 本仓库
-2. 添加环境变量：Settings - Secrets and variables - Actions - New repository secret
-3. 修改 .github/workflows/checkin.yml： 删除 `self-hosted` 并提交
-4. 北京时间每天早上 7:30 定时运行，或仓库 master 分支有提交时触发
+## 快速开始
 
-| 内容              | 说明                                                      | 备注                                                                                                                 |
-|-----------------|---------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| secret          | 添加之后可以更新值，但看不到之前设置的值，且不能修改名称                            | ![](screenshots/secrets.png)                                                                                       |
-| `self-hosted`   | 将自己的机器注册为 runner                                        | 参照 [Hosting your own runners - GitHub Docs](https://docs.github.com/en/actions/hosting-your-own-runners)           |
-| `ubuntu-latest` | 使用 github 提供的 runner                                    | 参照 [Using GitHub-hosted runners - GitHub Docs](https://docs.github.com/en/actions/using-github-hosted-runners)<br> |
-| 更新              | 打开自己的仓库页面，点击 `Sync fork - Update branch` 即可，注意更新会触发一次签到 | ![](screenshots/update.jpg)                                                                                        |
+1. **Fork** 本仓库
+2. 添加环境变量：Settings → Secrets and variables → Actions → New repository secret
+3. 默认使用 GitHub-hosted runner（`ubuntu-latest`），北京时间每天 07:30 自动运行
 
-**注意**
+更新：打开自己 fork 的仓库，点击 `Sync fork → Update branch` 即可同步
 
-1. Yamibo 论坛使用 github runner 签到时会遇到 WAF 拦截，建议本地定时运行
-2. 签到失败可以在 Action 页面尝试 `Re-run`，例如 5.8 已手动完成 v2ex 签到，5.9 定时运行签到昨天显示失败，手动触发重新运行签到成功
+![](screenshots/update.jpg)
 
-| runner          | 定时运行                                      | 手动触发                                    |
-|-----------------|-------------------------------------------|-----------------------------------------|
-| `self-hosted`   | ![](screenshots/self-hosted-schedule.png) | ![](screenshots/self-hosted.png) |
-| `ubuntu-latest` | ![](screenshots/ubuntu-schedule.png)      | ![](screenshots/ubuntu.png)     |
+签到结果示例：
+
+| GitHub-hosted | Self-hosted |
+|---------------|-------------|
+| ![](screenshots/ubuntu.jpeg) | ![](screenshots/self-hosted.jpeg) |
+
+## Runner 说明
+
+项目提供两个 workflow 文件：
+
+| 文件 | Runner | 说明 |
+|------|--------|------|
+| `checkin.yml` | `ubuntu-latest` | fork 直接使用，无需额外配置 |
+| `checkin-self-hosted.yml` | `self-hosted` | 需自建 runner，纯 shell 步骤不依赖 action 下载 |
+
+### GitHub-hosted（`ubuntu-latest`）
+
+Fork 后开箱即用。Yamibo 论坛有 Cloudflare 防护，GitHub 数据中心 IP 会被 WAF 拦截，建议自建 runner 或本地定时运行。
+
+### Self-hosted
+
+适合需要本地网络环境的场景（例如 Yamibo 签到），使用 [myoung34/docker-github-actions-runner](https://github.com/myoung34/docker-github-actions-runner) 在本地启动 runner：
+
+```bash
+docker run -d \
+  --name github-runner \
+  --net=host \
+  --platform linux/amd64 \
+  --restart unless-stopped \
+  -e ACCESS_TOKEN="<PAT>" \
+  -e DEBUG_OUTPUT="true" \
+  -e LABELS="self-hosted,linux" \
+  -e REPO_URL="https://github.com/jckling/Daily-Bonus" \
+  -e RUN_AS_ROOT="true" \
+  -e RUNNER_NAME="local-runner" \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v runner_work:/_work \
+  myoung34/github-runner:latest
+```
+
+需要修改的参数：
+
+- `ACCESS_TOKEN`：GitHub Personal Access Token
+- `REPO_URL`：fork 的仓库地址
+
+### 问题排查
+
+**Self-hosted runner 卡住没有日志**
+
+检查容器能否连接 `launch.actions.githubusercontent.com`，国内网络可能无法直连。`checkin-self-hosted.yml` 已改为纯 shell 步骤（`git clone` + `curl`），不依赖 external action 下载。如仍有问题，给容器配置代理或使用 `--net=host`。
+
+**Yamibo 签到提示「页面被拦截」**
+
+Yamibo 启用了 Cloudflare JS Challenge，检测 TLS 指纹。GitHub-hosted runner（美国 IP）和 ARM64 self-hosted runner 均会被拦截。解决方案：使用 x86_64 模式的 self-hosted runner，或本地 crontab 运行。
+
+**签到失败**
+
+在 Actions 页面点击 `Re-run` 重新运行即可。Cookie 可能过期，重新获取后更新 Secrets。
 
 ## 配置
 
+在仓库 Settings → Secrets → Actions 中添加以下环境变量，按需配置：
+
 ### Telegram 推送
 
-| Name         | Description | How to                                                                                                                                                                                                      |
-|--------------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| TG_BOT_TOKEN | bot token   | [How Do I Create a Bot?](https://core.telegram.org/bots#how-do-i-create-a-bot)                                                                                                                              |
-| TG_USER_ID   | user id     | [How can I send a message to someone with my telegram bot using their Username](https://stackoverflow.com/questions/41664810/how-can-i-send-a-message-to-someone-with-my-telegram-bot-using-their-username) |
+| Name | Description |
+|------|-------------|
+| TG_BOT_TOKEN | Bot Token，参考 [How Do I Create a Bot?](https://core.telegram.org/bots#how-do-i-create-a-bot) |
+| TG_USER_ID | 用户 ID，参考 [How can I send a message to someone with my telegram bot using their Username](https://stackoverflow.com/questions/41664810) |
 
-### 赛马娘每日签到
+### 赛马娘网页签到
 
-赛马娘每日签到使用 Cookie 登录，需要 `site`、`joy_jct`、`DedeUserID`、`SESSDATA` 四个 Cookie
+使用 Cookie 登录，需要 `site`、`joy_jct`、`DedeUserID`、`SESSDATA`
 
-| Name        | Description |
-|-------------|-------------|
-| UMA_COOKIES | Cookie      |
+| Name | Description |
+|------|-------------|
+| UMA_COOKIES | Cookie |
 
 ### V2EX
 
-V2EX 论坛使用 Cookie 登录，需要 `PB3_SESSION`、`A2`、`V2EX_LANG` 和 `V2EX_TAB` 四个 Cookie
+使用 Cookie 登录，需要 `PB3_SESSION`、`A2`、`V2EX_LANG`、`V2EX_TAB`
 
-| Name         | Description |
-|--------------|-------------|
-| V2EX_COOKIES | Cookie      |
+| Name | Description |
+|------|-------------|
+| V2EX_COOKIES | Cookie |
 
 ### Yamibo
 
-300 论坛使用 Cookie 登录，需要 `EeqY_2132_auth` 和 `EeqY_2132_saltkey` 两个 Cookie
+使用 Cookie 登录，需要 `EeqY_2132_auth`、`EeqY_2132_saltkey`
 
-| Name           | Description |
-|----------------|-------------|
-| YAMIBO_COOKIES | Cookie      |
+| Name | Description |
+|------|-------------|
+| YAMIBO_COOKIES | Cookie |
 
 ### Yurifans
 
-Yurifans 使用邮箱和密码登录
-
-| Name              | Description |
-|-------------------|-------------|
-| YURIFANS_EMAIL    | 邮箱          |
-| YURIFANS_PASSWORD | 密码          |
+| Name | Description |
+|------|-------------|
+| YURIFANS_EMAIL | 邮箱 |
+| YURIFANS_PASSWORD | 密码 |
 
 ### Bilibili
 
-bilibili 登录访问自动领取每日硬币奖励，需要 `SESSDATA` 和 `DedeUserID` 两个 Cookie
+使用 Cookie 登录，需要 `SESSDATA`、`DedeUserID`
 
-| Name             | Description |
-|------------------|-------------|
-| BILIBILI_COOKIES | Cookie      |
+| Name | Description |
+|------|-------------|
+| BILIBILI_COOKIES | Cookie |
 
-### FFXIV
+### 哔咔漫画
 
-FF14 商城使用账号和密码登录
+| Name | Description |
+|------|-------------|
+| PICA_USERNAME | 用户名或邮箱 |
+| PICA_PASSWORD | 密码 |
 
-| Name             | Description |
-|------------------|-------------|
-| FFXIV_USERNAME   | 手机号或邮箱      |
-| FFXIV_PASSWORD   | 密码          |
+## 开发环境
 
-> ⚠️ 登录接口已接入 Geetest 风控，脚本登录大概率触发滑块验证码，目前无法自动绕过。
-
-### Picacomic
-
-哔咔漫画使用账号（邮箱/用户名）和密码登录
-
-| Name          | Description |
-|---------------|-------------|
-| PICA_USERNAME | 用户名或邮箱      |
-| PICA_PASSWORD | 密码          |
-
-## 许可证
-
-[MIT](https://github.com/jckling/Daily-Bonus/blob/master/LICENSE)
-
-## 其他
-
-开发工具
-
-- Chrome DevTools / HAR
+- macOS (Apple Silicon, ARM64)
 - Python 3.13
-- GitHub Actions
+- [curl_cffi](https://github.com/lexiforest/curl_cffi)（TLS 指纹伪装）
+- Chrome DevTools / HAR 抓包
 
-参阅
+## 致谢
 
-- [构建和测试 Python](https://docs.github.com/cn/actions/guides/building-and-testing-python)
-- [为用户帐户仓库创建密码](https://docs.github.com/cn/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
-- [Workflow commands for GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions)
 - [ewigl/picacg-auto-checkin](https://github.com/ewigl/picacg-auto-checkin)
 - [Sitoi/dailycheckin](https://github.com/Sitoi/dailycheckin)
 - [myoung34/docker-github-actions-runner](https://github.com/myoung34/docker-github-actions-runner)
+- [astral-sh/uv](https://github.com/astral-sh/uv)
+
+## 许可证
+
+[MIT](LICENSE)
