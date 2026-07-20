@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-# @File     : ffxiv.py
-# @Time     : 2021/03/24 15:43
-# @Author   : Jckling
+# @File         : ffxiv.py
+# @Time         : 2021/03/24 15:43
+# @Author       : Jckling
+# @Deprecated   : SDO 登录接口接入了 Geetest 风控，脚本登录会触发滑块验证码，无法自动绕过
 
 import base64
 import json

@@ -8,7 +8,7 @@ import os
 import time
 
 from datetime import datetime, timedelta, timezone
-from checkin import bilibili, ffxiv, pica, uma, v2ex, yamibo, yurifans
+from checkin import bilibili, pica, uma, v2ex, yamibo, yurifans
 from telegram import Bot
 
 # info
@@ -32,8 +32,6 @@ if __name__ == '__main__':
         content_lst.append(f"「Bilibili」\n{bilibili.main()}")
     if os.environ.get("PICA_USERNAME") and os.environ.get("PICA_PASSWORD"):
         content_lst.append(f"「哔咔漫画」\n{pica.main()}")
-    if os.environ.get("FFXIV_USERNAME") and os.environ.get("FFXIV_PASSWORD"):
-        content_lst.append(f"「FF14」\n{ffxiv.main()}")
 
     content_lst.append(
         f"开始时间: {utc_time}\n"
