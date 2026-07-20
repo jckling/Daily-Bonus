@@ -2,12 +2,13 @@ name: Daily Bonus (Self-hosted)
 
 on:
   schedule:
-    - cron: '30 07 * * *'
+    - cron: '30 23 * * *'
   workflow_dispatch:
 
 jobs:
   checkin:
     runs-on: self-hosted
+    timeout-minutes: 10
 
     env:
       V2EX_COOKIES: ${{ secrets.V2EX_COOKIES }}
