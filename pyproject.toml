@@ -1,7 +1,7 @@
 [project]
 name = "daily-bonus"
 version = "0.1.0"
-description = "Add your description here"
+description = "自动签到脚本，支持 V2EX、Bilibili、Yamibo、Yurifans、赛马娘网页签到、哔咔漫画"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
