@@ -10,4 +10,5 @@ dependencies = [
     "pycryptodome>=3.20",
     "requests>=2.32.5",
     "python-telegram-bot>=22.0",
+    "playwright>=1.62.0",
 ]

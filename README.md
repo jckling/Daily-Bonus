@@ -16,7 +16,7 @@
 |------|------|------|
 | V2EX | Cookie | 铜币 |
 | Bilibili | Cookie | 硬币 |
-| Yamibo（百合会 / 300） | Cookie | 对象 |
+| Yamibo（百合会 / 300） | 账号密码 | 对象 |
 | Yurifans | 账号密码 | 积分 |
 | 赛马娘 | Cookie | 游戏内道具 + 积分 |
 | 哔咔漫画 | 账号密码 | 经验 |
@@ -55,7 +55,7 @@ Telegram 推送：
 
 ### GitHub-hosted（`ubuntu-latest`）
 
-Fork 后开箱即用。Yamibo 论坛有 Cloudflare 防护，GitHub 数据中心 IP 会被 WAF 拦截，建议自建 runner 或本地定时运行。
+Fork 后开箱即用。Yamibo 论坛有百度 WAF 防护，脚本通过 Playwright 解决 JS 挑战。
 
 ### Self-hosted
 
@@ -91,7 +91,7 @@ docker run -d \
 
 **Yamibo 签到提示「页面被拦截」**
 
-Yamibo 启用了 Cloudflare JS Challenge，检测 TLS 指纹。GitHub-hosted runner（美国 IP）和 ARM64 self-hosted runner 均会被拦截。解决方案：使用 x86_64 模式的 self-hosted runner，或本地 crontab 运行。
+Yamibo 启用了百度 WAF JS 挑战，curl_cffi 无法执行 JS 会返回 405。脚本通过 Playwright 启动 headless Chromium 解决挑战并提取 `nox_jst_v1` cookie。GitHub-hosted runner 已内置 Playwright 浏览器安装步骤；self-hosted runner 需确保 Docker 容器内有 Chromium 运行依赖。
 
 **签到失败**
 
@@ -126,11 +126,12 @@ Yamibo 启用了 Cloudflare JS Challenge，检测 TLS 指纹。GitHub-hosted run
 
 ### Yamibo
 
-使用 Cookie 登录，需要 `EeqY_2132_auth`、`EeqY_2132_saltkey`
+使用账号密码登录，通过 Playwright 解决百度 WAF JS 挑战
 
 | Name | Description |
 |------|-------------|
-| YAMIBO_COOKIES | Cookie |
+| YAMIBO_USERNAME | 用户名 |
+| YAMIBO_PASSWORD | 密码 |
 
 ### Yurifans
 
@@ -158,7 +159,9 @@ Yamibo 启用了 Cloudflare JS Challenge，检测 TLS 指纹。GitHub-hosted run
 
 - macOS (Apple Silicon, ARM64)
 - Python 3.13
+- [uv](https://github.com/astral-sh/uv)（依赖管理）
 - [curl_cffi](https://github.com/lexiforest/curl_cffi)（TLS 指纹伪装）
+- [Playwright](https://github.com/microsoft/playwright)（WAF JS 挑战）
 - Chrome DevTools / HAR 抓包
 
 ## 致谢

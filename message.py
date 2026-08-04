@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     if os.environ.get("UMA_COOKIES"):
         content_lst.append(f"「賽馬娘每日簽到」\n{uma.main()}")
-    if os.environ.get("YAMIBO_COOKIES"):
+    if os.environ.get("YAMIBO_USERNAME") and os.environ.get("YAMIBO_PASSWORD"):
         content_lst.append(f"「Yamibo」\n{yamibo.main()}")
     if os.environ.get("YURIFANS_EMAIL") and os.environ.get("YURIFANS_PASSWORD"):
         content_lst.append(f"「Yurifans」\n{yurifans.main()}")

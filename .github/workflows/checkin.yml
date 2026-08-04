@@ -12,7 +12,8 @@ jobs:
     env:
       V2EX_COOKIES: ${{ secrets.V2EX_COOKIES }}
       BILIBILI_COOKIES: ${{ secrets.BILIBILI_COOKIES }}
-      YAMIBO_COOKIES: ${{ secrets.YAMIBO_COOKIES }}
+      YAMIBO_USERNAME: ${{ secrets.YAMIBO_USERNAME }}
+      YAMIBO_PASSWORD: ${{ secrets.YAMIBO_PASSWORD }}
       YURIFANS_EMAIL: ${{ secrets.YURIFANS_EMAIL }}
       YURIFANS_PASSWORD: ${{ secrets.YURIFANS_PASSWORD }}
       PICA_USERNAME: ${{ secrets.PICA_USERNAME }}
@@ -39,5 +40,13 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
+      - name: Install Playwright browsers
+        run: uv run playwright install chromium --with-deps
+
       - name: Check-in
-        run: uv run python ./message.py
+        run: |
+          for i in 1 2 3; do
+            uv run python ./message.py && exit 0
+            [ $i -lt 3 ] && echo "::warning::Attempt $i failed, retrying in 5s..." && sleep 5
+          done
+          exit 1
