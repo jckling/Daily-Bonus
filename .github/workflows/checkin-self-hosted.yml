@@ -27,8 +27,10 @@ jobs:
       - name: Checkout repo
         run: |
           rm -rf * .[!.]* 2>/dev/null
-          git clone --depth 1 https://github.com/${{ github.repository }}.git .
-          git checkout ${{ github.sha }}
+          git init
+          git remote add origin https://github.com/${{ github.repository }}.git
+          git fetch --depth 1 origin ${{ github.sha }}
+          git checkout FETCH_HEAD
 
       - name: Install uv
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
