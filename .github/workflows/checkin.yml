@@ -19,6 +19,7 @@ jobs:
       PICA_USERNAME: ${{ secrets.PICA_USERNAME }}
       PICA_PASSWORD: ${{ secrets.PICA_PASSWORD }}
       UMA_COOKIES: ${{ secrets.UMA_COOKIES }}
+      NETEASE_MUSIC_COOKIES: ${{ secrets.NETEASE_MUSIC_COOKIES }}
       TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
       TG_USER_ID: ${{ secrets.TG_USER_ID }}
 

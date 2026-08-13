@@ -20,6 +20,7 @@
 | Yurifans | 账号密码 | 积分 |
 | 赛马娘 | Cookie | 游戏内道具 + 积分 |
 | 哔咔漫画 | 账号密码 | 经验 |
+| 网易云音乐 | Cookie | 云贝签到 |
 | ~~FF14 商城~~ | ~~账号密码~~ | ~~积分~~ |
 
 > ⚠️ **FF14 商城签到已废弃**。SDO 登录接口接入了 Geetest 风控，脚本登录会触发滑块验证码，无法自动绕过。
@@ -154,6 +155,14 @@ Yamibo 启用了百度 WAF JS 挑战，curl_cffi 无法执行 JS 会返回 405�
 |------|-------------|
 | PICA_USERNAME | 用户名或邮箱 |
 | PICA_PASSWORD | 密码 |
+
+### 网易云音乐
+
+使用 Cookie 登录，需要 `MUSIC_U`，浏览器登录 [music.163.com](https://music.163.com) 获取
+
+| Name | Description |
+|------|-------------|
+| NETEASE_MUSIC_COOKIES | Cookie |
 
 ## 开发环境
 
