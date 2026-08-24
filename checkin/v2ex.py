@@ -15,6 +15,18 @@ COOKIES = os.environ.get("V2EX_COOKIES")
 SESSION = requests.Session()
 msg = []
 
+# Extract only needed cookies
+NEEDED_KEYS = ["PB3_SESSION", "A2", "V2EX_LANG", "V2EX_TAB"]
+_cookie_parts = []
+if COOKIES:
+    for pair in COOKIES.split(";"):
+        pair = pair.strip()
+        for key in NEEDED_KEYS:
+            if pair.startswith(f"{key}="):
+                _cookie_parts.append(pair)
+                break
+COOKIES = "; ".join(_cookie_parts)
+
 BASE_URL = "https://www.v2ex.com"
 
 HEADERS = {

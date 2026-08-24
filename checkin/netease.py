@@ -11,6 +11,18 @@ from curl_cffi import requests as cffi_requests
 COOKIES = os.environ.get("NETEASE_MUSIC_COOKIES")
 msg = []
 
+# Extract only needed cookies
+NEEDED_KEYS = ["MUSIC_U"]
+_cookie_parts = []
+if COOKIES:
+    for pair in COOKIES.split(";"):
+        pair = pair.strip()
+        for key in NEEDED_KEYS:
+            if pair.startswith(f"{key}="):
+                _cookie_parts.append(pair)
+                break
+COOKIES = "; ".join(_cookie_parts)
+
 BASE_URL = "https://music.163.com"
 
 SESSION = cffi_requests.Session()

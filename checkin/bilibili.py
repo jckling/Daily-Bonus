@@ -13,6 +13,18 @@ COOKIES = os.environ.get("BILIBILI_COOKIES")
 SESSION = requests.Session()
 msg = []
 
+# Extract only needed cookies
+NEEDED_KEYS = ["SESSDATA", "DedeUserID"]
+_cookie_parts = []
+if COOKIES:
+    for pair in COOKIES.split(";"):
+        pair = pair.strip()
+        for key in NEEDED_KEYS:
+            if pair.startswith(f"{key}="):
+                _cookie_parts.append(pair)
+                break
+COOKIES = "; ".join(_cookie_parts)
+
 BASE_URL = "https://api.bilibili.com"
 
 HEADERS = {
