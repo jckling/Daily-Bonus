@@ -46,7 +46,7 @@ jobs:
         run: uv sync
 
       - name: Install Playwright browsers
-        run: uv run playwright install chromium --with-deps
+        run: uv run playwright install chromium
 
       - name: Check-in
         run: |

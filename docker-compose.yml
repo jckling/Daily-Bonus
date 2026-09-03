@@ -1,6 +1,8 @@
 services:
   github-runner:
-    image: myoung34/github-runner:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.runner
     platform: linux/amd64
     restart: always
     network_mode: host
