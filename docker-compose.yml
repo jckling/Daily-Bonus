@@ -1,15 +1,13 @@
 services:
   github-runner:
-    build:
-      context: .
-      dockerfile: Dockerfile.runner
+    image: myoung34/github-runner:latest
     platform: linux/amd64
     restart: always
     network_mode: host
     environment:
       - ACCESS_TOKEN=${ACCESS_TOKEN}
       - DEBUG_OUTPUT=true
-      - EPHEMERAL=true
+      # - EPHEMERAL=true
       - LABELS=self-hosted,linux
       - REPO_URL=https://github.com/jckling/Daily-Bonus
       - RUN_AS_ROOT=true
