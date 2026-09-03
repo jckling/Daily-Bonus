@@ -1,0 +1,22 @@
+services:
+  github-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.runner
+    platform: linux/amd64
+    restart: always
+    network_mode: host
+    environment:
+      - ACCESS_TOKEN=${ACCESS_TOKEN}
+      - DEBUG_OUTPUT=true
+      - EPHEMERAL=true
+      - LABELS=self-hosted,linux
+      - REPO_URL=https://github.com/jckling/Daily-Bonus
+      - RUN_AS_ROOT=true
+      - RUNNER_NAME=local-runner
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - runner_work:/_work
+
+volumes:
+  runner_work:

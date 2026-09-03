@@ -1,0 +1,12 @@
+FROM myoung34/github-runner:latest
+
+# Install uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+
+# Install Python 3.13 via uv
+RUN /root/.local/bin/uv python install 3.13
+
+# Install playwright via uv + chromium with system deps
+RUN /root/.local/bin/uv pip install --system playwright && \
+    playwright install chromium --with-deps

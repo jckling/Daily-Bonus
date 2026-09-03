@@ -11,3 +11,4 @@ pyvenv.cfg
 desktop.ini
 .DS_Store
 *.har
+.env

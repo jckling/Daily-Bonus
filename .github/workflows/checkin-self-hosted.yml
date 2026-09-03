@@ -33,20 +33,8 @@ jobs:
           git fetch --depth 1 origin ${{ github.sha }}
           git checkout FETCH_HEAD
 
-      - name: Install uv
-        run: curl -LsSf https://astral.sh/uv/install.sh | sh
-
-      - name: Add uv to PATH
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Install Python 3.13
-        run: uv python install 3.13
-
       - name: Sync dependencies
         run: uv sync
-
-      - name: Install Playwright browsers
-        run: uv run playwright install chromium --with-deps
 
       - name: Check-in
         run: |
