@@ -9,11 +9,10 @@ services:
     environment:
       - ACCESS_TOKEN=${ACCESS_TOKEN}
       - DEBUG_OUTPUT=true
-      # - EPHEMERAL=true
       - LABELS=self-hosted,linux
       - REPO_URL=https://github.com/jckling/Daily-Bonus
       - RUN_AS_ROOT=true
-      - RUNNER_NAME=local-runner
+      - RUNNER_NAME=${RUNNER_NAME}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - runner_work:/_work
