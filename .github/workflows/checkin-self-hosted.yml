@@ -49,9 +49,4 @@ jobs:
         run: uv run playwright install chromium
 
       - name: Check-in
-        run: |
-          for i in 1 2 3; do
-            uv run python ./message.py && exit 0
-            [ $i -lt 3 ] && echo "::warning::Attempt $i failed, retrying in 5s..." && sleep 5
-          done
-          exit 1
+        run: uv run python ./message.py
