@@ -12,6 +12,8 @@ from datetime import datetime
 
 import requests
 
+from checkin import net
+
 # cookies
 COOKIES = os.environ.get("UMA_COOKIES")
 SESSION = requests.Session()
@@ -224,6 +226,9 @@ def main():
     global msg
     if not COOKIES:
         return "No UMA_COOKIES set"
+
+    if not net.open_route(SESSION, f"{BASE_URL}/"):
+        return f"无法连接网站{net.proxy_hint()}"
 
     # Check status first
     status = get_status()

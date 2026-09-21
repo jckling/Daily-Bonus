@@ -7,6 +7,8 @@ import os
 
 from curl_cffi import requests as cffi_requests
 
+from checkin import net
+
 # cookies
 COOKIES = os.environ.get("NETEASE_MUSIC_COOKIES")
 msg = []
@@ -80,6 +82,9 @@ def main():
     global msg
     if not COOKIES:
         return "No NETEASE_MUSIC_COOKIES set"
+
+    if not net.open_route(SESSION, f"{BASE_URL}/", impersonate="chrome"):
+        return f"无法连接网站{net.proxy_hint()}"
 
     pointmall_sign()
     get_sign_info()

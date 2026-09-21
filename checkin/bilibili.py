@@ -8,6 +8,8 @@ import time
 
 import requests
 
+from checkin import net
+
 # cookies
 COOKIES = os.environ.get("BILIBILI_COOKIES")
 SESSION = requests.Session()
@@ -96,12 +98,18 @@ def get_coin_log():
         today = time.strftime("%Y-%m-%d")
         coin_list = obj.get("data", {}).get("list", [])
         login_reward = [
-            c for c in coin_list
+            c
+            for c in coin_list
             if c.get("reason") == "登录奖励" and c.get("time", "").startswith(today)
         ]
         if login_reward:
             reward_time = login_reward[0].get("time", "")
-            msg.append({"name": "登录奖励", "value": f"已领取 {login_reward[0]['delta']} 硬币（{reward_time}）"})
+            msg.append(
+                {
+                    "name": "登录奖励",
+                    "value": f"已领取 {login_reward[0]['delta']} 硬币（{reward_time}）",
+                }
+            )
         else:
             msg.append({"name": "登录奖励", "value": "今日未领取"})
 
@@ -110,6 +118,9 @@ def main():
     global msg
     if not COOKIES:
         return "No BILIBILI_COOKIES set"
+
+    if not net.open_route(SESSION, f"{BASE_URL}/"):
+        return f"无法连接网站{net.proxy_hint()}"
 
     if not get_nav():
         return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])

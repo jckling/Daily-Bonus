@@ -10,6 +10,8 @@ import time
 import requests
 from lxml import html
 
+from checkin import net
+
 # cookies
 COOKIES = os.environ.get("V2EX_COOKIES")
 SESSION = requests.Session()
@@ -141,6 +143,9 @@ def main():
     global msg
     if not COOKIES:
         return "No V2EX_COOKIES set"
+
+    if not net.open_route(SESSION, f"{BASE_URL}/"):
+        return f"无法连接网站{net.proxy_hint()}"
 
     once, _, _ = get_once()
     if once:

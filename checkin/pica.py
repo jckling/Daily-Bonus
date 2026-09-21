@@ -11,12 +11,16 @@ import uuid
 
 import requests
 
+from checkin import net
+
 # info
 EMAIL = os.environ.get("PICA_USERNAME")
 PASSWORD = os.environ.get("PICA_PASSWORD")
 msg = []
 
 BASE_URL = "https://picaapi.picacomic.com"
+
+SESSION = requests.Session()
 
 API_KEY = "C69BAF41DA5ABD1FFEDC6D2FEA56B"
 API_SECRET = "~d}$Q7$eIni=V)9\\RK/P.RM4;9[7|@/CA}b~OW!3?EV`:<>M7pddUBL5n|0/*Cn"
@@ -51,7 +55,7 @@ def login():
     """Login with email and password, return token or None."""
     path = "auth/sign-in"
     headers = gen_headers("POST", path)
-    r = requests.post(
+    r = SESSION.post(
         f"{BASE_URL}/{path}",
         headers=headers,
         json={"email": EMAIL, "password": PASSWORD},
@@ -71,7 +75,7 @@ def punch_in(token):
     """Punch in and return result status."""
     path = "users/punch-in"
     headers = gen_headers("POST", path, token)
-    r = requests.post(f"{BASE_URL}/{path}", headers=headers)
+    r = SESSION.post(f"{BASE_URL}/{path}", headers=headers)
     obj = r.json()
 
     global msg
@@ -97,7 +101,7 @@ def get_profile(token):
     """Get user profile: level, exp."""
     path = "users/profile"
     headers = gen_headers("GET", path, token)
-    r = requests.get(f"{BASE_URL}/{path}", headers=headers)
+    r = SESSION.get(f"{BASE_URL}/{path}", headers=headers)
     obj = r.json()
 
     global msg
@@ -112,6 +116,9 @@ def main():
     global msg
     if not EMAIL or not PASSWORD:
         return "No PICA_USERNAME or PICA_PASSWORD set"
+
+    if not net.open_route(SESSION, f"{BASE_URL}/"):
+        return f"无法连接网站{net.proxy_hint()}"
 
     token = login()
     if not token:
