@@ -10,6 +10,8 @@ from curl_cffi import requests as cffi_requests
 from lxml import html
 from playwright.sync_api import sync_playwright
 
+from checkin import net
+
 # info
 USERNAME = os.environ.get("YAMIBO_USERNAME")
 PASSWORD = os.environ.get("YAMIBO_PASSWORD")
@@ -28,9 +30,18 @@ HEADERS = {
 
 
 def solve_waf():
-    """Use Playwright to solve Baidu WAF JS challenge and return nox_jst_v1 cookie."""
+    """Ensure the forum is reachable: fast path on 200, else solve the challenge in a real browser."""
+    r = SESSION.get(
+        f"{BASE_URL}/forum.php",
+        headers=HEADERS,
+        impersonate="chrome",
+        timeout=15,
+    )
+    if r.status_code == 200:
+        return True
+
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=True, proxy=net.browser_proxy(SESSION))
         context = browser.new_context(
             user_agent=HEADERS["user-agent"],
         )
@@ -50,9 +61,21 @@ def login():
     """Login via Discuz member.php and return True if successful."""
     global msg
 
-    if not solve_waf():
-        msg.append({"name": "登录信息", "value": "WAF 挑战失败"})
+    if not net.open_route(SESSION, f"{BASE_URL}/forum.php", impersonate="chrome"):
+        msg.append({"name": "登录信息", "value": f"无法连接网站{net.proxy_hint()}"})
         return False
+
+    if not solve_waf():
+        # The direct route can turn flaky mid-flow; retry once through the proxy
+        if net.PROXY_URL and not SESSION.proxies:
+            SESSION.proxies = {"http": net.PROXY_URL, "https": net.PROXY_URL}
+            if not solve_waf():
+                SESSION.proxies = {}
+                msg.append({"name": "登录信息", "value": "WAF 挑战失败"})
+                return False
+        else:
+            msg.append({"name": "登录信息", "value": "WAF 挑战失败"})
+            return False
 
     # Step 1: GET login page to extract formhash and loginhash
     r = SESSION.get(
