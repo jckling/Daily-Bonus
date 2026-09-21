@@ -102,6 +102,14 @@ Yamibo 启用了百度 WAF JS 挑战，curl_cffi 无法执行 JS 会返回 405�
 
 在仓库 Settings → Secrets → Actions 中添加以下环境变量，按需配置：
 
+### 通用
+
+各站点签到前会先探测直连可达性，直连失败时自动回退到代理（仅 Self-hosted Runner）：
+
+| Name | Description |
+|------|-------------|
+| PROXY_URL | 可选，代理地址（如 `http://127.0.0.1:7890`），直连失败时回退使用 |
+
 ### Telegram 推送
 
 | Name | Description |

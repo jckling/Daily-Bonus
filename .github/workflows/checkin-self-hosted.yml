@@ -21,6 +21,7 @@ jobs:
       PICA_PASSWORD: ${{ secrets.PICA_PASSWORD }}
       UMA_COOKIES: ${{ secrets.UMA_COOKIES }}
       NETEASE_MUSIC_COOKIES: ${{ secrets.NETEASE_MUSIC_COOKIES }}
+      PROXY_URL: ${{ secrets.PROXY_URL }}
       TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
       TG_USER_ID: ${{ secrets.TG_USER_ID }}
 
@@ -46,7 +47,9 @@ jobs:
         run: uv sync
 
       - name: Install Playwright browsers
-        run: uv run playwright install chromium
+        run: |
+          uv run playwright install chromium
+          uv run patchright install chromium
 
       - name: Check-in
-        run: uv run python ./message.py
+        run: xvfb-run -a uv run python ./message.py
