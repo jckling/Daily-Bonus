@@ -7,6 +7,8 @@ import os
 import re
 import time
 
+from datetime import datetime, timedelta, timezone
+
 import requests
 from lxml import html
 
@@ -110,8 +112,8 @@ def query_balance():
 
     global msg
 
-    # Today's reward from transaction history (includes timestamp)
-    today = time.strftime("%Y%m%d")
+    # Today's reward from transaction history (V2EX dates rewards by Beijing time)
+    today = datetime.now(timezone(timedelta(hours=8))).strftime("%Y%m%d")
     reward_match = re.search(rf"{today} 的每日登录奖励 (\d+) 铜币", r.text)
     if reward_match:
         # Find the timestamp in the same table row (previous td)
@@ -174,14 +176,12 @@ def main():
                 m["value"] += reward_ts
                 break
 
-    # If check_in failed and no today's reward, the cookie may be expired
+    # If check_in failed and no today's reward, re-probe the mission page:
+    # the redeem response may be blocked by Cloudflare while the reward landed
     has_fail = any(m["name"] == "签到信息" and "失败" in m["value"] for m in msg)
     if has_fail and not has_reward:
-        # Check if already claimed today (mission page shows "已领取")
-        # This covers the case where CI runs close to midnight and the
-        # daily reset hasn't happened yet for V2EX's timezone
-        already = any(m["name"] == "登录信息" and "已领取" in m.get("value", "") for m in msg)
-        if already:
+        r = SESSION.get(f"{BASE_URL}/mission/daily", headers=HEADERS)
+        if "每日登录奖励已领取" in r.text:
             msg = [m for m in msg if not (m["name"] == "签到信息" and "失败" in m["value"])]
             msg.append({"name": "签到信息", "value": "今日已签到"})
         else:
