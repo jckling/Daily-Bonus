@@ -84,7 +84,7 @@ def main():
         return "No NETEASE_MUSIC_COOKIES set"
 
     if not net.open_route(SESSION, f"{BASE_URL}/", impersonate="chrome"):
-        return f"无法连接网站{net.proxy_hint()}"
+        return "无法连接网站"
 
     pointmall_sign()
     get_sign_info()

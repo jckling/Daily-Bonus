@@ -122,7 +122,7 @@ def solve_waf():
         browser = None
         for options in launch_options:
             try:
-                browser = p.chromium.launch(args=args, proxy=net.browser_proxy(SESSION), **options)
+                browser = p.chromium.launch(args=args, **options)
                 break
             except Exception:
                 continue
@@ -291,9 +291,8 @@ def main():
     if not USERNAME or not PASSWORD:
         return "No YURIFANS_EMAIL or YURIFANS_PASSWORD set"
 
-    # SafeLine bans the exit IP for days on challenge failure; keep the home IP out of it
-    if not net.open_route(SESSION, f"{BASE_URL}/", impersonate="chrome", prefer_proxy=True):
-        return f"无法连接网站{net.proxy_hint()}"
+    if not net.open_route(SESSION, f"{BASE_URL}/", impersonate="chrome"):
+        return "无法连接网站"
 
     if not solve_waf():
         return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])

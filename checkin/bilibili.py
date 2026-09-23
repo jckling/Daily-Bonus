@@ -120,7 +120,7 @@ def main():
         return "No BILIBILI_COOKIES set"
 
     if not net.open_route(SESSION, f"{BASE_URL}/"):
-        return f"无法连接网站{net.proxy_hint()}"
+        return "无法连接网站"
 
     if not get_nav():
         return "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])

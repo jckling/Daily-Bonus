@@ -118,7 +118,7 @@ def main():
         return "No PICA_USERNAME or PICA_PASSWORD set"
 
     if not net.open_route(SESSION, f"{BASE_URL}/"):
-        return f"无法连接网站{net.proxy_hint()}"
+        return "无法连接网站"
 
     token = login()
     if not token:

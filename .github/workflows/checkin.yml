@@ -20,7 +20,6 @@ jobs:
       PICA_PASSWORD: ${{ secrets.PICA_PASSWORD }}
       UMA_COOKIES: ${{ secrets.UMA_COOKIES }}
       NETEASE_MUSIC_COOKIES: ${{ secrets.NETEASE_MUSIC_COOKIES }}
-      PROXY_URL: ${{ secrets.PROXY_URL }}
       TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
       TG_USER_ID: ${{ secrets.TG_USER_ID }}
 

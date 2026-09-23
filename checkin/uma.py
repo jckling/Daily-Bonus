@@ -228,7 +228,7 @@ def main():
         return "No UMA_COOKIES set"
 
     if not net.open_route(SESSION, f"{BASE_URL}/"):
-        return f"无法连接网站{net.proxy_hint()}"
+        return "无法连接网站"
 
     # Check status first
     status = get_status()

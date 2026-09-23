@@ -41,7 +41,7 @@ def solve_waf():
         return True
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, proxy=net.browser_proxy(SESSION))
+        browser = p.chromium.launch(headless=True)
         context = browser.new_context(
             user_agent=HEADERS["user-agent"],
         )
@@ -62,20 +62,12 @@ def login():
     global msg
 
     if not net.open_route(SESSION, f"{BASE_URL}/forum.php", impersonate="chrome"):
-        msg.append({"name": "登录信息", "value": f"无法连接网站{net.proxy_hint()}"})
+        msg.append({"name": "登录信息", "value": "无法连接网站"})
         return False
 
     if not solve_waf():
-        # The direct route can turn flaky mid-flow; retry once through the proxy
-        if net.PROXY_URL and not SESSION.proxies:
-            SESSION.proxies = {"http": net.PROXY_URL, "https": net.PROXY_URL}
-            if not solve_waf():
-                SESSION.proxies = {}
-                msg.append({"name": "登录信息", "value": "WAF 挑战失败"})
-                return False
-        else:
-            msg.append({"name": "登录信息", "value": "WAF 挑战失败"})
-            return False
+        msg.append({"name": "登录信息", "value": "WAF 挑战失败"})
+        return False
 
     # Step 1: GET login page to extract formhash and loginhash
     r = SESSION.get(
