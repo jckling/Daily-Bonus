@@ -14,8 +14,6 @@ jobs:
       BILIBILI_COOKIES: ${{ secrets.BILIBILI_COOKIES }}
       YAMIBO_USERNAME: ${{ secrets.YAMIBO_USERNAME }}
       YAMIBO_PASSWORD: ${{ secrets.YAMIBO_PASSWORD }}
-      YURIFANS_EMAIL: ${{ secrets.YURIFANS_EMAIL }}
-      YURIFANS_PASSWORD: ${{ secrets.YURIFANS_PASSWORD }}
       PICA_USERNAME: ${{ secrets.PICA_USERNAME }}
       PICA_PASSWORD: ${{ secrets.PICA_PASSWORD }}
       UMA_COOKIES: ${{ secrets.UMA_COOKIES }}
@@ -42,12 +40,7 @@ jobs:
         run: uv sync
 
       - name: Install Playwright browsers
-        run: |
-          uv run playwright install chromium --with-deps
-          uv run patchright install chromium
-
-      - name: Install xvfb
-        run: sudo apt-get install -y xvfb
+        run: uv run playwright install chromium --with-deps
 
       - name: Check-in
-        run: xvfb-run -a uv run python ./message.py
+        run: uv run python ./message.py

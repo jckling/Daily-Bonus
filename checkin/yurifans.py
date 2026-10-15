@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-# @File     : yurifans.py
-# @Time     : 2023/04/25 12:17
-# @Author   : Cloudac7, Jckling
+# @File         : yurifans.py
+# @Time         : 2023/04/25 12:17
+# @Author       : Cloudac7, Jckling
+# @Deprecated   : 站点接入雷池 WAF 人机验证
 
 import json
 import os

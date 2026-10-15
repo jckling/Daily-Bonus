@@ -17,13 +17,15 @@
 | V2EX | Cookie | 铜币 |
 | Bilibili | Cookie | 硬币 |
 | Yamibo（百合会 / 300） | 账号密码 | 对象 |
-| Yurifans | 账号密码 | 积分 |
+| ~~Yurifans~~ | ~~账号密码~~ | ~~积分~~ |
 | 赛马娘 | Cookie | 游戏内道具 + 积分 |
 | 哔咔漫画 | 账号密码 | 经验 |
 | 网易云音乐 | Cookie | 云贝签到 |
 | ~~FF14 商城~~ | ~~账号密码~~ | ~~积分~~ |
 
 > ⚠️ **FF14 商城签到已废弃**。SDO 登录接口接入了 Geetest 风控，脚本登录会触发滑块验证码，无法自动绕过。
+
+> ⚠️ **Yurifans 签到已废弃**。站点接入雷池 WAF 人机验证，先弃用了（平时也不用这个网站…）。
 
 Telegram 推送：
 
@@ -133,13 +135,6 @@ Yamibo 启用了百度 WAF JS 挑战，curl_cffi 无法执行 JS 会返回 405�
 |------|-------------|
 | YAMIBO_USERNAME | 用户名 |
 | YAMIBO_PASSWORD | 密码 |
-
-### Yurifans
-
-| Name | Description |
-|------|-------------|
-| YURIFANS_EMAIL | 邮箱 |
-| YURIFANS_PASSWORD | 密码 |
 
 ### Bilibili
 
