@@ -5,10 +5,11 @@
 
 import os
 import re
+import time
 
 from curl_cffi import requests as cffi_requests
 from lxml import html
-from playwright.sync_api import sync_playwright
+from patchright.sync_api import sync_playwright
 
 from checkin import net
 
@@ -30,31 +31,39 @@ HEADERS = {
 
 
 def solve_waf():
-    """Ensure the forum is reachable: fast path on 200, else solve the challenge in a real browser."""
-    r = SESSION.get(
-        f"{BASE_URL}/forum.php",
-        headers=HEADERS,
-        impersonate="chrome",
-        timeout=15,
-    )
+    """Ensure the sign page is reachable: fast path on 200, else solve the nox challenge in a headed browser."""
+    sign_url = f"{BASE_URL}/plugin.php?id=zqlj_sign"
+    r = SESSION.get(sign_url, headers=HEADERS, impersonate="chrome", timeout=15)
     if r.status_code == 200:
         return True
 
+    # The WAF returns 403 to headless browsers, so solve the challenge in a headed one
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(
+            headless=False,
+            args=["--disable-blink-features=AutomationControlled"],
+        )
         context = browser.new_context(
             user_agent=HEADERS["user-agent"],
         )
         page = context.new_page()
-        page.goto(f"{BASE_URL}/forum.php", wait_until="networkidle", timeout=30000)
-        cookies = context.cookies()
+        page.goto(sign_url, wait_until="load", timeout=30000)
+        nox_cookie = None
+        for _ in range(10):
+            nox_cookie = next(
+                (c for c in context.cookies(sign_url) if c["name"] == "nox_jst_v1"), None
+            )
+            if nox_cookie:
+                break
+            time.sleep(2)
         browser.close()
 
-    nox_cookie = next((c for c in cookies if c["name"] == "nox_jst_v1"), None)
-    if nox_cookie:
-        SESSION.cookies.set("nox_jst_v1", nox_cookie["value"], domain="bbs.yamibo.com")
-        return True
-    return False
+    if not nox_cookie:
+        return False
+    SESSION.cookies.set("nox_jst_v1", nox_cookie["value"], domain="bbs.yamibo.com")
+
+    r = SESSION.get(sign_url, headers=HEADERS, impersonate="chrome", timeout=15)
+    return r.status_code == 200
 
 
 def login():
@@ -181,6 +190,42 @@ def check_in(sign_hash):
         return False, r.text
 
 
+def repair_missed_days(sign_hash):
+    """Repair missed days until the sign page offers none left."""
+    if not sign_hash:
+        return
+
+    done = []
+    failed = []
+    for _ in range(10):  # each repair shrinks the list; a few rounds are enough
+        r = SESSION.get(f"{BASE_URL}/plugin.php?id=zqlj_sign", headers=HEADERS, impersonate="chrome")
+        select = re.search(r'id="repairday"(.*?)</select>', r.text, re.S)
+        days = (
+            re.findall(r'<option value="(\d{8}_[0-9a-f]+)">([^<]+)</option>', select.group(1))
+            if select
+            else []
+        )
+        if not days:
+            break
+
+        progress = False
+        for value, label in days:
+            url = f"{BASE_URL}/plugin.php?id=zqlj_sign&repair={sign_hash}&repairday={value}"
+            rr = SESSION.get(url, headers=HEADERS, impersonate="chrome")
+            if "打卡成功" in rr.text:
+                done.append(label.strip())
+                progress = True
+            else:
+                failed.append(label.strip())
+        if not progress:
+            break
+
+    if done:
+        msg.append({"name": "补签", "value": f"{'、'.join(done)} 补签成功"})
+    if failed:
+        msg.append({"name": "补签", "value": f"{'、'.join(failed)} 补签失败"})
+
+
 def query_stats(page_text):
     """Query sign stats from sign page HTML and credit info from credit page."""
     global msg
@@ -236,6 +281,8 @@ def main():
         page_text = r2.text
     else:
         msg.append({"name": "签到信息", "value": "今日已签到，无需重复签到"})
+
+    repair_missed_days(sign_hash)
 
     query_stats(page_text)
 
