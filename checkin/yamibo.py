@@ -38,25 +38,31 @@ def solve_waf():
         return True
 
     # The WAF returns 403 to headless browsers, so solve the challenge in a headed one
-    with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=False,
-            args=["--disable-blink-features=AutomationControlled"],
-        )
-        context = browser.new_context(
-            user_agent=HEADERS["user-agent"],
-        )
-        page = context.new_page()
-        page.goto(sign_url, wait_until="load", timeout=30000)
-        nox_cookie = None
-        for _ in range(10):
-            nox_cookie = next(
-                (c for c in context.cookies(sign_url) if c["name"] == "nox_jst_v1"), None
+    nox_cookie = None
+    for _ in range(2):  # a transient edge failure should not kill the whole run
+        with sync_playwright() as p:
+            browser = p.chromium.launch(
+                headless=False,
+                args=["--disable-blink-features=AutomationControlled"],
             )
-            if nox_cookie:
-                break
-            time.sleep(2)
-        browser.close()
+            context = browser.new_context(
+                user_agent=HEADERS["user-agent"],
+            )
+            page = context.new_page()
+            try:
+                page.goto(sign_url, wait_until="load", timeout=30000)
+            except Exception:
+                pass  # a 525/error page aborts navigation; poll for the cookie anyway
+            for _ in range(10):
+                nox_cookie = next(
+                    (c for c in context.cookies(sign_url) if c["name"] == "nox_jst_v1"), None
+                )
+                if nox_cookie:
+                    break
+                time.sleep(2)
+            browser.close()
+        if nox_cookie:
+            break
 
     if not nox_cookie:
         return False
